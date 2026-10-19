@@ -1,0 +1,1967 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agendophobia — Agenda Diária 24h</title>
+
+  <!-- Google Fonts: Space Grotesk, Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            display: ['Space Grotesk', 'Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace']
+          },
+          colors: {
+            navy: {
+              950: '#0b1528',
+              900: '#101e36',
+              800: '#172a4a'
+            },
+            darkgray: {
+              900: '#1e2633',
+              800: '#263040',
+              700: '#323f52',
+              600: '#43536b'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body, input, select, textarea, button {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    }
+
+    @media print {
+      header, .no-print, #login-modal { display: none !important; }
+      body { background: white !important; color: black !important; padding: 0 !important; }
+    }
+
+    /* Sombra suave executiva */
+    .navy-glow {
+      box-shadow: 0 12px 32px -8px rgba(7, 14, 28, 0.55);
+    }
+
+    .excel-cell {
+      font-family: 'Inter', system-ui, sans-serif;
+      letter-spacing: -0.01em;
+      outline: none;
+      transition: all 0.14s cubic-bezier(0.4, 0, 0.2, 1);
+      word-break: break-word;
+      white-space: pre-wrap;
+    }
+
+    .excel-cell:focus {
+      box-shadow: inset 0 0 0 2px #38bdf8;
+    }
+
+    /* Hora Atual Destacada */
+    .current-hour-badge {
+      animation: pulseGlow 2s infinite ease-in-out;
+    }
+    @keyframes pulseGlow {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.7; transform: scale(0.96); }
+    }
+
+    /* Animação suave ao trocar de dia */
+    .day-transition {
+      animation: slideFade 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @keyframes slideFade {
+      from { opacity: 0.45; transform: translateY(3px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #475569;
+      border-radius: 9999px;
+    }
+
+    .brand-credit-footer {
+      position: fixed;
+      bottom: 8px;
+      right: 14px;
+      font-size: 11px;
+      font-weight: 600;
+      color: #94a3b8;
+      opacity: 0.55;
+      letter-spacing: 0.6px;
+      text-transform: lowercase;
+      user-select: none;
+      pointer-events: none;
+      z-index: 40;
+      font-family: 'JetBrains Mono', monospace;
+    }
+  </style>
+</head>
+<!-- Fundo Azul Navy (#101e36) no modo escuro, com painéis em Cinza-Escuro (#1e2633 / #263040) -->
+<body class="bg-slate-100 dark:bg-[#101e36] text-slate-900 dark:text-slate-100 antialiased min-h-screen p-2 md:p-4 transition-colors duration-200 selection:bg-sky-500 selection:text-white">
+
+  <!-- Luzes sutis de fundo no Azul Navy -->
+  <div class="fixed inset-0 pointer-events-none overflow-hidden z-0 no-print">
+    <div class="absolute -top-28 -left-28 w-96 h-96 bg-sky-500/10 dark:bg-sky-500/10 rounded-full blur-3xl"></div>
+    <div class="absolute top-1/3 -right-28 w-96 h-96 bg-indigo-500/5 dark:bg-indigo-400/10 rounded-full blur-3xl"></div>
+  </div>
+
+  <!-- ==========================================================================
+       MODAL DE LOGIN PRIVADO (ACESSO EXCLUSIVO KMKZ)
+       ========================================================================== -->
+  <div id="login-modal" class="fixed inset-0 z-50 bg-[#0b1528]/95 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-[#1e2633] border border-slate-200 dark:border-[#323f52] rounded-3xl p-6 md:p-8 max-w-md w-full shadow-2xl navy-glow relative overflow-hidden">
+      
+      <div class="absolute -top-14 -right-14 w-40 h-40 bg-sky-500/15 rounded-full blur-3xl pointer-events-none"></div>
+
+      <div class="flex flex-col items-center text-center mb-6">
+        <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-sky-500 via-blue-600 to-indigo-600 p-[2px] shadow-xl mb-3">
+          <div class="w-full h-full bg-[#152030] rounded-[14px] flex items-center justify-center">
+            <span class="font-mono font-black text-xl text-sky-400 tracking-tighter">24H</span>
+          </div>
+        </div>
+        <h2 class="font-display text-2xl font-bold text-slate-900 dark:text-white tracking-tight flex items-center gap-2">
+          AGENDOPHOBIA
+        </h2>
+        <p class="text-xs text-slate-500 dark:text-slate-300 mt-1 font-medium">
+          🔒 Acesso Privado • Sincronização Criptografada GitHub
+        </p>
+      </div>
+
+      <form id="form-login" class="flex flex-col gap-3.5">
+        <div>
+          <label class="text-[11px] font-bold text-slate-700 dark:text-slate-300 block mb-1 uppercase tracking-wider font-mono">Usuário</label>
+          <input type="text" id="input-username" placeholder="Digite seu usuário..." autocomplete="username" required class="w-full bg-slate-50 dark:bg-[#263040] border border-slate-300 dark:border-[#3b4a61] rounded-xl px-3.5 py-2.5 text-xs text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-sky-500 transition font-medium">
+        </div>
+
+        <div>
+          <label class="text-[11px] font-bold text-slate-700 dark:text-slate-300 block mb-1 uppercase tracking-wider font-mono">Senha de Acesso</label>
+          <div class="relative flex items-center">
+            <input type="password" id="input-password" placeholder="••••••••••••" autocomplete="current-password" required class="w-full bg-slate-50 dark:bg-[#263040] border border-slate-300 dark:border-[#3b4a61] rounded-xl pl-3.5 pr-10 py-2.5 text-xs text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-sky-500 transition font-mono">
+            <button type="button" onclick="toggleLoginPasswordEye()" class="absolute right-2.5 text-slate-400 hover:text-slate-700 dark:hover:text-white text-sm cursor-pointer" title="Mostrar / Ocultar Senha">
+              <span id="login-eye-icon">👁️</span>
+            </button>
+          </div>
+        </div>
+
+        <label class="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-300 cursor-pointer select-none mt-0.5">
+          <input type="checkbox" id="cb-remember-me" checked class="w-4 h-4 rounded accent-sky-500 cursor-pointer">
+          <span>Manter conectado neste dispositivo</span>
+        </label>
+
+        <div id="login-error" class="hidden text-xs text-rose-400 font-semibold bg-rose-500/10 border border-rose-500/30 rounded-xl p-2.5 text-center">
+          Credenciais inválidas. Acesso restrito ao usuário Kmkz.
+        </div>
+
+        <button type="submit" class="w-full bg-sky-600 hover:bg-sky-500 text-white font-extrabold py-3 rounded-xl transition shadow-lg shadow-sky-600/25 text-xs mt-1 flex items-center justify-center gap-2 cursor-pointer">
+          <span>Desbloquear Agendophobia</span>
+          <span>➔</span>
+        </button>
+      </form>
+
+      <div class="mt-5 pt-3 border-t border-slate-200 dark:border-[#323f52] text-center">
+        <p class="text-[10px] font-mono text-slate-400 dark:text-slate-400">
+          corvix systems ® • zero-firebase cloud
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       CONTAINER PRINCIPAL DO SISTEMA (DESBLOQUEADO APÓS LOGIN)
+       ========================================================================== -->
+  <div id="app-container" class="hidden relative z-10 max-w-[1550px] mx-auto">
+
+    <!-- HEADER PRINCIPAL (Cinza-Escuro #1e2633 sobre fundo Navy) -->
+    <header class="mb-3 bg-white dark:bg-[#1e2633] border border-slate-200 dark:border-[#323f52] rounded-2xl p-3 shadow-xl navy-glow flex flex-col lg:flex-row lg:items-center justify-between gap-3 no-print">
+      
+      <!-- Identidade Visual Agendophobia + Tema -->
+      <div class="flex items-center gap-3">
+        <button id="btn-toggle-theme" onclick="toggleTheme()" class="bg-slate-100 dark:bg-[#263040] border border-slate-300 dark:border-[#3b4a61] text-slate-800 dark:text-slate-100 w-10 h-10 rounded-xl shadow-sm transition-all hover:scale-105 hover:border-sky-400 flex items-center justify-center font-bold cursor-pointer" title="Alternar Tema Escuro / Claro">
+          <span id="theme-icon" class="text-lg">🌙</span>
+        </button>
+
+        <div class="flex items-center gap-3">
+          <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-sky-500 via-blue-600 to-indigo-600 p-[1.5px] shadow-md">
+            <div class="w-full h-full bg-[#152030] rounded-[10px] flex items-center justify-center">
+              <span class="font-mono font-black text-base text-sky-400 tracking-tighter">24H</span>
+            </div>
+          </div>
+
+          <div>
+            <div class="flex items-center gap-2">
+              <h1 class="font-display text-lg font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-1.5">
+                AGENDOPHOBIA
+                <span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded-md bg-sky-500/15 text-sky-600 dark:text-sky-300 border border-sky-400/30 uppercase">
+                  KMKZ • 24H
+                </span>
+              </h1>
+            </div>
+            <p class="text-[11px] text-slate-500 dark:text-slate-300 font-medium flex items-center gap-2">
+              <span>Operador: <strong class="text-slate-900 dark:text-white">Kmkz</strong></span>
+              <span class="text-slate-300 dark:text-slate-500">•</span>
+              <span id="live-clock" class="font-mono text-[11px] text-sky-600 dark:text-sky-400 font-semibold">--:--:--</span>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- NAVEGADOR CENTRAL DE DIA (PASSAR PARA O LADO: ONTEM ◀ HOJE ▶ AMANHÃ) -->
+      <div class="flex flex-wrap items-center justify-center gap-2 bg-slate-100 dark:bg-[#161f2c] border border-slate-200 dark:border-[#323f52] rounded-2xl p-1.5 shadow-inner">
+        
+        <button onclick="navigateDay(-1)" class="px-3 py-2 rounded-xl bg-white dark:bg-[#263040] hover:bg-sky-600 hover:text-white dark:hover:bg-sky-600 text-slate-700 dark:text-slate-200 font-bold text-xs transition-all shadow-sm flex items-center gap-1.5 cursor-pointer border border-slate-200/80 dark:border-[#3b4a61]" title="Dia Anterior (Seta Esquerda: Alt + ◀)">
+          <span>◀</span>
+          <span class="hidden sm:inline">Anterior</span>
+        </button>
+
+        <div class="flex flex-col items-center px-3 min-w-[220px] text-center">
+          <div class="flex items-center gap-1.5">
+            <span id="badge-relative-day" class="text-[10px] font-mono font-extrabold uppercase px-2 py-0.5 rounded-full bg-sky-600 text-white shadow-sm">
+              HOJE
+            </span>
+            <span id="lbl-weekday" class="font-display font-bold text-sm text-slate-900 dark:text-white capitalize">
+              Segunda-feira
+            </span>
+          </div>
+          <div class="flex items-center gap-1.5 mt-0.5">
+            <span id="lbl-full-date" class="font-mono text-xs font-semibold text-slate-500 dark:text-slate-300">
+              19 de Outubro, 2026
+            </span>
+            <input type="date" id="input-date-picker" onchange="jumpToDate(this.value)" class="w-5 h-5 opacity-70 hover:opacity-100 cursor-pointer bg-transparent text-xs outline-none" title="Escolher data no calendário">
+          </div>
+        </div>
+
+        <button onclick="navigateDay(1)" class="px-3 py-2 rounded-xl bg-white dark:bg-[#263040] hover:bg-sky-600 hover:text-white dark:hover:bg-sky-600 text-slate-700 dark:text-slate-200 font-bold text-xs transition-all shadow-sm flex items-center gap-1.5 cursor-pointer border border-slate-200/80 dark:border-[#3b4a61]" title="Próximo Dia (Seta Direita: Alt + ▶)">
+          <span class="hidden sm:inline">Próximo</span>
+          <span>▶</span>
+        </button>
+
+        <button id="btn-go-today" onclick="goToToday()" class="px-2.5 py-2 rounded-xl bg-sky-500/15 hover:bg-sky-600 hover:text-white text-sky-600 dark:text-sky-300 font-extrabold text-xs border border-sky-400/30 transition cursor-pointer" title="Voltar para o dia de Hoje">
+          📍 Hoje
+        </button>
+      </div>
+
+      <!-- Sincronização GitHub Cloud (Sem Firebase) + Backup + Logout -->
+      <div class="flex flex-wrap items-center gap-1.5">
+        <button id="btn-cloud-sync" onclick="forceGitHubCloudSync()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs px-3 py-2 rounded-xl transition font-extrabold shadow flex items-center gap-1.5 cursor-pointer" title="Sincronização em Nuvem via GitHub (Sem Firebase) — Clique para sincronizar agora">
+          <span id="cloud-sync-icon">🟢</span>
+          <span id="cloud-sync-text">GitHub Sync</span>
+        </button>
+
+        <button onclick="exportBackupJSON()" class="bg-[#263040] hover:bg-[#323f52] text-slate-100 border border-[#3b4a61] text-xs px-2.5 py-2 rounded-xl transition font-bold shadow flex items-center gap-1 cursor-pointer" title="Exportar Backup Local (.json)">
+          📥 Backup
+        </button>
+
+        <label class="bg-slate-200 dark:bg-[#263040] hover:bg-slate-300 dark:hover:bg-[#323f52] text-slate-800 dark:text-slate-200 border border-slate-300 dark:border-[#3b4a61] text-xs px-2.5 py-2 rounded-xl transition font-bold shadow cursor-pointer flex items-center gap-1" title="Restaurar Backup (.json)">
+          📤
+          <input type="file" accept=".json" onchange="importBackupJSON(event)" class="hidden">
+        </label>
+
+        <button onclick="logoutSession()" class="bg-rose-600 hover:bg-rose-500 text-white text-xs px-3 py-2 rounded-xl transition font-extrabold shadow flex items-center gap-1 cursor-pointer" title="Trancar e Sair">
+          🔒 Sair
+        </button>
+      </div>
+
+    </header>
+
+    <!-- BARRA DE MINI-DIAS DA SEMANA (NAVEGAÇÃO RÁPIDA DE 7 DIAS AO REDOR DO DIA ATUAL) -->
+    <div id="week-strip-container" class="mb-3 grid grid-cols-7 gap-1.5 no-print">
+      <!-- Gerado via JS -->
+    </div>
+
+    <!-- CONTAINER PRINCIPAL DA TABELA DIÁRIA 24H (Cinza-Escuro #1e2633) -->
+    <main class="bg-white dark:bg-[#1e2633] border border-slate-200 dark:border-[#323f52] rounded-2xl p-3 shadow-2xl navy-glow">
+      
+      <!-- Barra de Ferramentas Enxuta & Dinâmica -->
+      <div class="sticky top-2 z-30 flex flex-wrap items-center justify-between gap-2.5 mb-3 no-print bg-slate-50/95 dark:bg-[#263040]/95 backdrop-blur-md p-2.5 rounded-xl border border-slate-200 dark:border-[#3b4a61] shadow-md">
+        
+        <div class="flex flex-wrap items-center gap-1.5">
+          <!-- Alternador de Visualização das 24h -->
+          <button id="btn-toggle-layout" onclick="toggleLayoutMode()" class="bg-sky-600 hover:bg-sky-500 text-white text-xs px-3 py-1.5 rounded-xl transition font-extrabold shadow flex items-center gap-1.5 cursor-pointer" title="Alternar entre Visão Lado a Lado (00h-11h | 12h-23h) ou Lista Contínua (00h-23h)">
+            <span id="layout-icon">⚡</span>
+            <span id="layout-text">Visão: Lado a Lado (12h | 12h)</span>
+          </button>
+
+          <button onclick="copyFromYesterday()" id="btn-copy-yesterday" class="bg-amber-500/15 hover:bg-amber-500/25 text-amber-600 dark:text-amber-300 border border-amber-400/30 text-xs px-2.5 py-1.5 rounded-xl transition font-extrabold flex items-center gap-1 cursor-pointer" title="Repetir a programação do dia anterior neste dia">
+            ⏪ Repetir Ontem
+          </button>
+
+          <button onclick="clearCurrentDay()" class="bg-rose-500/15 hover:bg-rose-600 hover:text-white text-rose-600 dark:text-rose-300 border border-rose-400/30 text-xs px-2.5 py-1.5 rounded-xl transition font-bold flex items-center gap-1 cursor-pointer" title="Limpar todas as 24h deste dia">
+            🗑️ Limpar Dia
+          </button>
+        </div>
+
+        <!-- Paleta de Cores Agendophobia -->
+        <div class="flex items-center gap-2">
+          <span id="lbl-mode-indicator" class="font-mono text-[11px] font-bold text-sky-600 dark:text-sky-400 hidden md:inline mr-1"></span>
+          <div id="fixed-color-palette" class="flex items-center gap-1.5 bg-slate-100 dark:bg-[#161f2c] border border-slate-300 dark:border-[#3b4a61] rounded-xl px-2.5 py-1.5 shadow-inner">
+            <!-- Gerado via JS -->
+          </div>
+        </div>
+
+      </div>
+
+      <!-- TABELA DIÁRIA 24 HORAS + NOTAS DO DIA -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-3">
+        
+        <!-- Grade de 24 Horas (Ocupa 9 colunas no desktop) -->
+        <div class="lg:col-span-9 overflow-x-auto custom-scrollbar border border-slate-200 dark:border-[#323f52] rounded-xl bg-slate-50 dark:bg-[#18202c]">
+          <table id="table-schedule" class="w-full text-xs text-left border-collapse table-fixed">
+            <thead id="grid-thead" class="bg-slate-200/80 dark:bg-[#151d28] text-slate-700 dark:text-slate-300 font-bold uppercase border-b border-slate-200 dark:border-[#323f52]">
+              <!-- Cabeçalho dinâmico -->
+            </thead>
+            <tbody id="excel-grid-body" class="divide-y divide-slate-200 dark:divide-[#2e3b4e]">
+              <!-- 24 Células de 1h geradas via JS -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Painel Lateral do Dia: Foco / Prioridades & Notas Rápidas (3 colunas no desktop) -->
+        <div class="lg:col-span-3 flex flex-col gap-3">
+          
+          <!-- Resumo de Ocupação das 24h -->
+          <div class="bg-slate-50 dark:bg-[#263040] border border-slate-200 dark:border-[#3b4a61] rounded-xl p-3.5 shadow-sm">
+            <div class="flex items-center justify-between mb-2">
+              <h3 class="font-display text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-200 flex items-center gap-1.5">
+                ⚡ Pulso das 24 Horas
+              </h3>
+              <span id="stat-percent-day" class="font-mono text-xs font-extrabold text-sky-600 dark:text-sky-400">0%</span>
+            </div>
+
+            <!-- Barra de Progresso de Horas Preenchidas -->
+            <div class="w-full h-2 bg-slate-200 dark:bg-[#161f2c] rounded-full overflow-hidden mb-3">
+              <div id="stat-progress-bar" class="h-full bg-gradient-to-r from-sky-500 to-indigo-500 transition-all duration-300" style="width: 0%"></div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2 text-center">
+              <div class="bg-white dark:bg-[#1e2633] border border-slate-200/80 dark:border-[#323f52] rounded-lg p-2">
+                <span class="block text-[10px] font-bold uppercase text-slate-400 dark:text-slate-300">Horas Ocupadas</span>
+                <span id="stat-busy-hours" class="font-mono text-base font-black text-emerald-500 dark:text-emerald-400">0h</span>
+              </div>
+              <div class="bg-white dark:bg-[#1e2633] border border-slate-200/80 dark:border-[#323f52] rounded-lg p-2">
+                <span class="block text-[10px] font-bold uppercase text-slate-400 dark:text-slate-300">Horas Livres</span>
+                <span id="stat-free-hours" class="font-mono text-base font-black text-amber-500 dark:text-amber-400">24h</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Top 3 Prioridades / Metas do Dia -->
+          <div class="bg-slate-50 dark:bg-[#263040] border border-slate-200 dark:border-[#3b4a61] rounded-xl p-3.5 shadow-sm">
+            <h3 class="font-display text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-200 mb-2.5 flex items-center justify-between">
+              <span>🎯 Foco do Dia</span>
+              <span id="priorities-counter" class="font-mono text-[10px] text-slate-400 dark:text-slate-300">0/3</span>
+            </h3>
+            <div id="daily-priorities-list" class="flex flex-col gap-2">
+              <!-- 3 itens gerados via JS -->
+            </div>
+          </div>
+
+          <!-- Bloco de Notas / Brain Dump do Dia -->
+          <div class="bg-slate-50 dark:bg-[#263040] border border-slate-200 dark:border-[#3b4a61] rounded-xl p-3.5 shadow-sm flex-1 flex flex-col min-h-[200px]">
+            <h3 class="font-display text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-200 mb-2 flex items-center justify-between">
+              <span>📝 Notas do Dia</span>
+              <span class="text-[10px] font-mono text-slate-400 dark:text-slate-300">Auto-Save</span>
+            </h3>
+            <textarea id="daily-notes-area" oninput="saveDailyNotes(this.value)" placeholder="Anotações livres, lembretes, ideias ou observações para este dia..." class="w-full flex-1 bg-white dark:bg-[#1e2633] border border-slate-200 dark:border-[#323f52] rounded-xl p-2.5 text-xs text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-400 outline-none focus:ring-2 focus:ring-sky-500 resize-none custom-scrollbar leading-relaxed"></textarea>
+          </div>
+
+        </div>
+
+      </div>
+
+    </main>
+
+  </div>
+
+  <!-- Toast de Feedback -->
+  <div id="toast-save" class="fixed top-4 right-4 z-50 bg-sky-600 text-white text-xs font-bold px-3.5 py-2 rounded-xl shadow-2xl transition-all duration-300 opacity-0 pointer-events-none transform translate-y-[-10px] flex items-center gap-1.5">
+    <span>💾</span> <span id="toast-text">Salvo!</span>
+  </div>
+
+  <!-- Assinatura sutil -->
+  <div class="brand-credit-footer no-print">agendophobia • corvix systems ®</div>
+
+  <script>
+    // ============================================================================
+    // 1. CRIPTOGRAFIA PURA JS (SHA-256 + STREAM CIPHER) PARA LOGIN & GITHUB CLOUD
+    // Funciona tanto em https:// (GitHub Pages) quanto em file:// (Local)
+    // ============================================================================
+    function sha256Bytes(asciiStr) {
+      const utf8 = unescape(encodeURIComponent(asciiStr));
+      const K = [
+        0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,
+        0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3, 0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174,
+        0xe49b69c1, 0xefbe4786, 0x0fc19dc6, 0x240ca1cc, 0x2de92c6f, 0x4a7484aa, 0x5cb0a9dc, 0x76f988da,
+        0x983e5152, 0xa831c66d, 0xb00327c8, 0xbf597fc7, 0xc6e00bf3, 0xd5a79147, 0x06ca6351, 0x14292967,
+        0x27b70a85, 0x2e1b2138, 0x4d2c6dfc, 0x53380d13, 0x650a7354, 0x766a0abb, 0x81c2c92e, 0x92722c85,
+        0xa2bfe8a1, 0xa81a664b, 0xc24b8b70, 0xc76c51a3, 0xd192e819, 0xd6990624, 0xf40e3585, 0x106aa070,
+        0x19a4c116, 0x1e376c08, 0x2748774c, 0x34b0bcb5, 0x391c0cb3, 0x4ed8aa4a, 0x5b9cca4f, 0x682e6ff3,
+        0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2
+      ];
+      let H = [0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a, 0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19];
+      const l = utf8.length * 8;
+      const words = [];
+      for (let i = 0; i < utf8.length; i++) {
+        words[i >> 2] |= (utf8.charCodeAt(i) & 0xff) << (24 - (i % 4) * 8);
+      }
+      words[l >> 5] |= 0x80 << (24 - (l % 32));
+      words[(((l + 64) >> 9) << 4) + 15] = l;
+
+      const W = new Array(64);
+      const rotr = (n, x) => (x >>> n) | (x << (32 - n));
+
+      for (let i = 0; i < words.length; i += 16) {
+        let [a, b, c, d, e, f, g, h] = H;
+        for (let t = 0; t < 64; t++) {
+          if (t < 16) {
+            W[t] = words[i + t] | 0;
+          } else {
+            const s0 = rotr(7, W[t - 15]) ^ rotr(18, W[t - 15]) ^ (W[t - 15] >>> 3);
+            const s1 = rotr(17, W[t - 2]) ^ rotr(19, W[t - 2]) ^ (W[t - 2] >>> 10);
+            W[t] = (W[t - 16] + s0 + W[t - 7] + s1) | 0;
+          }
+          const S1 = rotr(6, e) ^ rotr(11, e) ^ rotr(25, e);
+          const ch = (e & f) ^ (~e & g);
+          const temp1 = (h + S1 + ch + K[t] + W[t]) | 0;
+          const S0 = rotr(2, a) ^ rotr(13, a) ^ rotr(22, a);
+          const maj = (a & b) ^ (a & c) ^ (b & c);
+          const temp2 = (S0 + maj) | 0;
+
+          h = g; g = f; f = e; e = (d + temp1) | 0;
+          d = c; c = b; b = a; a = (temp1 + temp2) | 0;
+        }
+        H = H.map((v, idx) => (v + [a, b, c, d, e, f, g, h][idx]) | 0);
+      }
+
+      const out = [];
+      for (let i = 0; i < 8; i++) {
+        out.push((H[i] >>> 24) & 0xff, (H[i] >>> 16) & 0xff, (H[i] >>> 8) & 0xff, H[i] & 0xff);
+      }
+      return out;
+    }
+
+    function sha256Hex(str) {
+      return sha256Bytes(str).map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    // Hash SHA-256 de verificação para Kmkz + senha privada
+    const EXPECTED_AUTH_HASH = 'e5d468dcfcf89ff44b5a66c27c736f87d9db80d81ae03c1f0c91a1db8233ee99';
+    // Token GitHub criptografado com a senha do usuário (impossível ler sem a senha)
+    const ENCRYPTED_GH_TOKEN_HEX = 'cb3eb787cf4873e26beea22fcaaf27de465f9ef01e0a3c69bbddc3eccd628a8148fd2cc1baf5028f';
+    const GH_REPO_OWNER = 'pedrodasilva1001';
+    const GH_REPO_NAME = 'agendophobia';
+    const GH_DATA_BRANCH = 'cloud-data';
+    const GH_DATA_FILE = 'sync_db.json';
+
+    let activeGitHubToken = null;
+    let lastCloudSha = null;
+    let cloudSyncTimeout = null;
+
+    function unlockGitHubTokenWithPassword(password) {
+      const ks1 = sha256Bytes(`${password}|agendophobia_stream_1`);
+      const ks2 = sha256Bytes(`${password}|agendophobia_stream_2`);
+      const keyStream = ks1.concat(ks2);
+
+      const encBytes = [];
+      for (let i = 0; i < ENCRYPTED_GH_TOKEN_HEX.length; i += 2) {
+        encBytes.push(parseInt(ENCRYPTED_GH_TOKEN_HEX.substring(i, i + 2), 16));
+      }
+
+      let plain = '';
+      for (let i = 0; i < encBytes.length; i++) {
+        plain += String.fromCharCode(encBytes[i] ^ keyStream[i % keyStream.length]);
+      }
+      return plain;
+    }
+
+    // ============================================================================
+    // 2. SISTEMA DE AUTENTICAÇÃO PRIVADA (KMKZ)
+    // ============================================================================
+    const STORAGE_KEYS = {
+      DB: 'agendophobia_daily_db_v1',
+      META: 'agendophobia_daily_meta_v1',
+      THEME: 'agendophobia_theme',
+      LAYOUT: 'agendophobia_layout',
+      SESSION: 'agendophobia_kmkz_session_v1',
+      UPDATED_AT: 'agendophobia_updated_at_v1'
+    };
+
+    function toggleLoginPasswordEye() {
+      const inp = document.getElementById('input-password');
+      const icon = document.getElementById('login-eye-icon');
+      if (!inp) return;
+      if (inp.type === 'password') {
+        inp.type = 'text';
+        if (icon) icon.textContent = '🙈';
+      } else {
+        inp.type = 'password';
+        if (icon) icon.textContent = '👁️';
+      }
+    }
+
+    function checkSavedSession() {
+      const saved = localStorage.getItem(STORAGE_KEYS.SESSION) || sessionStorage.getItem(STORAGE_KEYS.SESSION);
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          if (parsed && parsed.authHash === EXPECTED_AUTH_HASH && parsed.token) {
+            activeGitHubToken = parsed.token;
+            unlockAppUI();
+            return true;
+          }
+        } catch (e) {}
+      }
+      return false;
+    }
+
+    function unlockAppUI() {
+      document.getElementById('login-modal').classList.add('hidden');
+      document.getElementById('app-container').classList.remove('hidden');
+      renderAll();
+      pullFromGitHubCloud(false);
+    }
+
+    function logoutSession() {
+      localStorage.removeItem(STORAGE_KEYS.SESSION);
+      sessionStorage.removeItem(STORAGE_KEYS.SESSION);
+      activeGitHubToken = null;
+      document.getElementById('app-container').classList.add('hidden');
+      document.getElementById('login-modal').classList.remove('hidden');
+      document.getElementById('form-login').reset();
+      showToast('🔒 Sessão encerrada com segurança.');
+    }
+
+    function setupLoginForm() {
+      const form = document.getElementById('form-login');
+      if (!form) return;
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const user = document.getElementById('input-username').value.trim().toLowerCase();
+        const pass = document.getElementById('input-password').value;
+        const remember = document.getElementById('cb-remember-me').checked;
+        const errBox = document.getElementById('login-error');
+
+        const candidateHash = sha256Hex(`${user}|${pass}|agendophobia_auth_2026`);
+        if (candidateHash === EXPECTED_AUTH_HASH) {
+          errBox.classList.add('hidden');
+          activeGitHubToken = unlockGitHubTokenWithPassword(pass);
+          const sessionPayload = JSON.stringify({
+            user: 'Kmkz',
+            authHash: candidateHash,
+            token: activeGitHubToken,
+            ts: Date.now()
+          });
+          if (remember) {
+            localStorage.setItem(STORAGE_KEYS.SESSION, sessionPayload);
+          } else {
+            sessionStorage.setItem(STORAGE_KEYS.SESSION, sessionPayload);
+          }
+          unlockAppUI();
+          showToast('🔓 Bem-vindo, Kmkz!');
+        } else {
+          errBox.classList.remove('hidden');
+        }
+      });
+    }
+
+    // ============================================================================
+    // 3. SINCRONIZAÇÃO EM NUVEM 100% GRATUITA VIA GITHUB API (ZERO FIREBASE)
+    // ============================================================================
+    function setCloudStatusUI(state, label) {
+      const btn = document.getElementById('btn-cloud-sync');
+      const icon = document.getElementById('cloud-sync-icon');
+      const text = document.getElementById('cloud-sync-text');
+      if (!btn || !icon || !text) return;
+
+      text.textContent = label;
+      if (state === 'online') {
+        btn.className = 'bg-emerald-600 hover:bg-emerald-500 text-white text-xs px-3 py-2 rounded-xl transition font-extrabold shadow flex items-center gap-1.5 cursor-pointer';
+        icon.textContent = '🟢';
+      } else if (state === 'syncing') {
+        btn.className = 'bg-amber-600 hover:bg-amber-500 text-white text-xs px-3 py-2 rounded-xl transition font-extrabold shadow flex items-center gap-1.5 cursor-pointer';
+        icon.textContent = '🔄';
+      } else {
+        btn.className = 'bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs px-3 py-2 rounded-xl transition font-extrabold shadow flex items-center gap-1.5 cursor-pointer';
+        icon.textContent = '⚪';
+      }
+    }
+
+    function utf8ToBase64(str) {
+      return btoa(unescape(encodeURIComponent(str)));
+    }
+
+    function base64ToUtf8(b64) {
+      return decodeURIComponent(escape(atob(b64.replace(/\s/g, ''))));
+    }
+
+    async function pullFromGitHubCloud(showFeedback = false) {
+      if (!activeGitHubToken) return;
+      setCloudStatusUI('syncing', 'Sincronizando...');
+      try {
+        const url = `https://api.github.com/repos/${GH_REPO_OWNER}/${GH_REPO_NAME}/contents/${GH_DATA_FILE}?ref=${GH_DATA_BRANCH}&t=${Date.now()}`;
+        const res = await fetch(url, {
+          headers: {
+            'Authorization': `token ${activeGitHubToken}`,
+            'Accept': 'application/vnd.github+json'
+          },
+          cache: 'no-store'
+        });
+
+        if (res.status === 404) {
+          // Primeiro envio para criar o arquivo de dados na branch cloud-data
+          await pushToGitHubCloud();
+          return;
+        }
+
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+        const data = await res.json();
+        lastCloudSha = data.sha;
+
+        if (data.content) {
+          const decoded = JSON.parse(base64ToUtf8(data.content));
+          const localUpdatedAt = parseInt(localStorage.getItem(STORAGE_KEYS.UPDATED_AT) || '0', 10);
+          const remoteUpdatedAt = decoded.updatedAt || 0;
+
+          if (remoteUpdatedAt >= localUpdatedAt || Object.keys(database).length === 0) {
+            if (decoded.database) database = Object.assign({}, database, decoded.database);
+            if (decoded.dailyMeta) dailyMeta = Object.assign({}, dailyMeta, decoded.dailyMeta);
+            localStorage.setItem(STORAGE_KEYS.DB, JSON.stringify(database));
+            localStorage.setItem(STORAGE_KEYS.META, JSON.stringify(dailyMeta));
+            localStorage.setItem(STORAGE_KEYS.UPDATED_AT, String(remoteUpdatedAt));
+            renderAll();
+          } else {
+            // Local é mais recente, envia para a nuvem
+            await pushToGitHubCloud();
+            return;
+          }
+        }
+
+        setCloudStatusUI('online', 'GitHub Sync');
+        if (showFeedback) showToast('☁️ Agenda sincronizada com o GitHub!');
+      } catch (err) {
+        console.warn('Modo local ativo:', err);
+        setCloudStatusUI('offline', 'Salvo Local');
+      }
+    }
+
+    async function pushToGitHubCloud() {
+      if (!activeGitHubToken) return;
+      setCloudStatusUI('syncing', 'Salvando...');
+      try {
+        const getUrl = `https://api.github.com/repos/${GH_REPO_OWNER}/${GH_REPO_NAME}/contents/${GH_DATA_FILE}?ref=${GH_DATA_BRANCH}&t=${Date.now()}`;
+        if (!lastCloudSha) {
+          const checkRes = await fetch(getUrl, {
+            headers: {
+              'Authorization': `token ${activeGitHubToken}`,
+              'Accept': 'application/vnd.github+json'
+            },
+            cache: 'no-store'
+          });
+          if (checkRes.ok) {
+            const checkJson = await checkRes.json();
+            lastCloudSha = checkJson.sha;
+          }
+        }
+
+        const nowTs = Date.now();
+        localStorage.setItem(STORAGE_KEYS.UPDATED_AT, String(nowTs));
+
+        const payloadObj = {
+          app: 'Agendophobia',
+          updatedAt: nowTs,
+          database,
+          dailyMeta
+        };
+
+        const bodyObj = {
+          message: `Sync Agendophobia (${new Date().toLocaleString('pt-BR')})`,
+          content: utf8ToBase64(JSON.stringify(payloadObj)),
+          branch: GH_DATA_BRANCH
+        };
+        if (lastCloudSha) bodyObj.sha = lastCloudSha;
+
+        const putUrl = `https://api.github.com/repos/${GH_REPO_OWNER}/${GH_REPO_NAME}/contents/${GH_DATA_FILE}`;
+        const putRes = await fetch(putUrl, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `token ${activeGitHubToken}`,
+            'Accept': 'application/vnd.github+json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(bodyObj)
+        });
+
+        if (putRes.status === 409) {
+          // Conflito de SHA, atualiza SHA e tenta novamente
+          lastCloudSha = null;
+          return await pushToGitHubCloud();
+        }
+
+        if (!putRes.ok) throw new Error(`HTTP ${putRes.status}`);
+
+        const putJson = await putRes.json();
+        if (putJson && putJson.content && putJson.content.sha) {
+          lastCloudSha = putJson.content.sha;
+        }
+        setCloudStatusUI('online', 'GitHub Sync');
+      } catch (err) {
+        console.warn('Falha ao salvar na nuvem GitHub (salvo localmente):', err);
+        setCloudStatusUI('offline', 'Salvo Local');
+      }
+    }
+
+    function scheduleCloudPush() {
+      clearTimeout(cloudSyncTimeout);
+      cloudSyncTimeout = setTimeout(() => {
+        pushToGitHubCloud();
+      }, 600);
+    }
+
+    async function forceGitHubCloudSync() {
+      await pushToGitHubCloud();
+      await pullFromGitHubCloud(true);
+    }
+
+    // ============================================================================
+    // 4. MOTOR DE AGENDA DIÁRIA 24 HORAS
+    // ============================================================================
+
+    const HOURS_24 = Array.from({ length: 24 }, (_, i) => {
+      const start = String(i).padStart(2, '0') + ':00';
+      const end = String((i + 1) % 24).padStart(2, '0') + ':00';
+      let period = 'Madrugada';
+      let periodIcon = '🌌';
+      if (i >= 6 && i < 12) { period = 'Manhã'; periodIcon = '☀️'; }
+      else if (i >= 12 && i < 18) { period = 'Tarde'; periodIcon = '🌤️'; }
+      else if (i >= 18) { period = 'Noite'; periodIcon = '🌙'; }
+      return {
+        index: i,
+        label: `${start} - ${end}`,
+        short: start,
+        period,
+        periodIcon
+      };
+    });
+
+    // Detecção de tela Mobile (< 768px) para ativar Lista Contínua automaticamente
+    function isMobileViewport() {
+      return window.innerWidth < 768 || window.matchMedia('(max-width: 767px)').matches;
+    }
+
+    // Estado Principal
+    let currentDateISO = getTodayISO();
+    let layoutMode = isMobileViewport()
+      ? 'single'
+      : (localStorage.getItem(STORAGE_KEYS.LAYOUT) || 'split'); // No celular abre direto em Lista Contínua ('single')
+    let lastWasMobile = isMobileViewport();
+
+    let database = JSON.parse(localStorage.getItem(STORAGE_KEYS.DB) || '{}');
+    let dailyMeta = JSON.parse(localStorage.getItem(STORAGE_KEYS.META) || '{}');
+
+    let selectedCellsMap = new Map();
+    let lastFocusedCellInput = null;
+    let lastFocusedCellKey = null;
+    let clipboardSlots = [];
+
+    // Paleta de Cores Agendophobia (Cinza-Escuro Padrão + Cores Vibrantes)
+    const PALETTE_COLORS = [
+      { name: 'Padrão (Cinza-Escuro)', code: '#263040' },
+      { name: 'Azul Celeste (Foco / Projetos)', code: '#0284c7' },
+      { name: 'Violeta (Estudo / Leitura)', code: '#7c3aed' },
+      { name: 'Crimson (Urgente / Importante)', code: '#e11d48' },
+      { name: 'Ciano Elétrico (Tecnologia / Dev)', code: '#00e5ff' },
+      { name: 'Verde Esmeralda (Saúde / Treino)', code: '#10b981' },
+      { name: 'Amarelo Solar (Aberto / Lembrete)', code: '#facc15' },
+      { name: 'Laranja Vivo (Compromisso / Externo)', code: '#f97316' },
+      { name: 'Rosa Choque (Pessoal / Lazer)', code: '#ec4899' },
+      { name: 'Navy Profundo (Descanso / Sono)', code: '#172554' }
+    ];
+
+    // Helpers de Data
+    function getTodayISO() {
+      const now = new Date();
+      const y = now.getFullYear();
+      const m = String(now.getMonth() + 1).padStart(2, '0');
+      const d = String(now.getDate()).padStart(2, '0');
+      return `${y}-${m}-${d}`;
+    }
+
+    function parseISODate(isoStr) {
+      const [y, m, d] = isoStr.split('-').map(Number);
+      return new Date(y, m - 1, d);
+    }
+
+    function formatISODate(dateObj) {
+      const y = dateObj.getFullYear();
+      const m = String(dateObj.getMonth() + 1).padStart(2, '0');
+      const d = String(dateObj.getDate()).padStart(2, '0');
+      return `${y}-${m}-${d}`;
+    }
+
+    function getRelativeDayLabel(isoStr) {
+      const today = parseISODate(getTodayISO());
+      const target = parseISODate(isoStr);
+      const diffTime = target.getTime() - today.getTime();
+      const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+
+      if (diffDays === 0) return { text: 'HOJE', class: 'bg-sky-600 text-white' };
+      if (diffDays === 1) return { text: 'AMANHÃ', class: 'bg-emerald-600 text-white' };
+      if (diffDays === -1) return { text: 'ONTEM', class: 'bg-amber-600 text-white' };
+      if (diffDays > 1) return { text: `EM +${diffDays} DIAS`, class: 'bg-slate-600 text-slate-100' };
+      return { text: `HÁ ${Math.abs(diffDays)} DIAS`, class: 'bg-slate-600 text-slate-200' };
+    }
+
+    // ============================================================================
+    // TEMA ESCURO (NAVY + CINZA ESCURO) / CLARO
+    // ============================================================================
+    function initTheme() {
+      const saved = localStorage.getItem(STORAGE_KEYS.THEME) || 'dark';
+      const htmlEl = document.documentElement;
+      const iconEl = document.getElementById('theme-icon');
+      if (saved === 'light') {
+        htmlEl.classList.remove('dark');
+        if (iconEl) iconEl.textContent = '☀️';
+      } else {
+        htmlEl.classList.add('dark');
+        if (iconEl) iconEl.textContent = '🌙';
+      }
+    }
+
+    function toggleTheme() {
+      const htmlEl = document.documentElement;
+      const isDark = htmlEl.classList.toggle('dark');
+      localStorage.setItem(STORAGE_KEYS.THEME, isDark ? 'dark' : 'light');
+      const iconEl = document.getElementById('theme-icon');
+      if (iconEl) iconEl.textContent = isDark ? '🌙' : '☀️';
+      renderGrid();
+      showToast(isDark ? '🌙 Tema Navy & Cinza-Escuro ativado' : '☀️ Tema Claro ativado');
+    }
+
+    // ============================================================================
+    // NAVEGAÇÃO ENTRE OS DIAS (PASSAR PARA O LADO)
+    // ============================================================================
+    function navigateDay(deltaDays) {
+      const d = parseISODate(currentDateISO);
+      d.setDate(d.getDate() + deltaDays);
+      currentDateISO = formatISODate(d);
+      triggerDayTransition();
+      renderAll();
+    }
+
+    function goToToday() {
+      currentDateISO = getTodayISO();
+      triggerDayTransition();
+      renderAll();
+      showToast('📍 Visualizando o dia de Hoje');
+    }
+
+    function jumpToDate(isoVal) {
+      if (!isoVal) return;
+      currentDateISO = isoVal;
+      triggerDayTransition();
+      renderAll();
+    }
+
+    function triggerDayTransition() {
+      const table = document.getElementById('table-schedule');
+      if (!table) return;
+      table.classList.remove('day-transition');
+      void table.offsetWidth;
+      table.classList.add('day-transition');
+    }
+
+    function toggleLayoutMode() {
+      layoutMode = (layoutMode === 'split') ? 'single' : 'split';
+      if (!isMobileViewport()) {
+        localStorage.setItem(STORAGE_KEYS.LAYOUT, layoutMode);
+      }
+      updateLayoutButtonUI();
+      renderGrid();
+    }
+
+    function updateLayoutButtonUI() {
+      const iconEl = document.getElementById('layout-icon');
+      const textEl = document.getElementById('layout-text');
+      if (!textEl) return;
+      if (layoutMode === 'split') {
+        if (iconEl) iconEl.textContent = '⚡';
+        textEl.textContent = 'Visão: Lado a Lado (12h | 12h)';
+      } else {
+        if (iconEl) iconEl.textContent = '📜';
+        textEl.textContent = 'Visão: Lista Contínua (24h)';
+      }
+    }
+
+    // ============================================================================
+    // RENDERIZAÇÃO DE CABEÇALHO DE DATA E STRIP DE 7 DIAS
+    // ============================================================================
+    function renderHeaderDateInfo() {
+      const d = parseISODate(currentDateISO);
+      const weekdayFormatter = new Intl.DateTimeFormat('pt-BR', { weekday: 'long' });
+      const fullDateFormatter = new Intl.DateTimeFormat('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
+
+      const lblWeekday = document.getElementById('lbl-weekday');
+      const lblFullDate = document.getElementById('lbl-full-date');
+      const badgeRel = document.getElementById('badge-relative-day');
+      const dateInput = document.getElementById('input-date-picker');
+      const modeIndicator = document.getElementById('lbl-mode-indicator');
+
+      if (lblWeekday) lblWeekday.textContent = weekdayFormatter.format(d);
+      if (lblFullDate) lblFullDate.textContent = fullDateFormatter.format(d);
+      if (dateInput) dateInput.value = currentDateISO;
+
+      const rel = getRelativeDayLabel(currentDateISO);
+      if (badgeRel) {
+        badgeRel.textContent = rel.text;
+        badgeRel.className = `text-[10px] font-mono font-extrabold uppercase px-2 py-0.5 rounded-full shadow-sm ${rel.class}`;
+      }
+
+      if (modeIndicator) {
+        modeIndicator.textContent = `📅 ${currentDateISO.split('-').reverse().join('/')}`;
+      }
+
+      renderWeekStrip();
+    }
+
+    function renderWeekStrip() {
+      const container = document.getElementById('week-strip-container');
+      if (!container) return;
+      container.innerHTML = '';
+
+      const centerDate = parseISODate(currentDateISO);
+      const todayISO = getTodayISO();
+      const shortWeekdays = ['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SÁB'];
+
+      for (let offset = -3; offset <= 3; offset++) {
+        const d = new Date(centerDate);
+        d.setDate(centerDate.getDate() + offset);
+        const iso = formatISODate(d);
+        const isSelected = (iso === currentDateISO);
+        const isToday = (iso === todayISO);
+
+        let filledCount = 0;
+        for (let h = 0; h < 24; h++) {
+          const val = database[`${iso}|${h}`];
+          if (isSlotFilled(val)) filledCount++;
+        }
+
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.onclick = () => jumpToDate(iso);
+
+        const baseClasses = 'flex flex-col items-center justify-center py-2 px-1 rounded-xl border transition-all cursor-pointer select-none relative overflow-hidden';
+        const activeClasses = isSelected
+          ? 'bg-sky-600 text-white border-sky-400 shadow-lg shadow-sky-900/40 scale-[1.02]'
+          : 'bg-white dark:bg-[#1e2633] text-slate-700 dark:text-slate-200 border-slate-200 dark:border-[#323f52] hover:border-sky-400/60 dark:hover:bg-[#263040]';
+
+        btn.className = `${baseClasses} ${activeClasses}`;
+        btn.innerHTML = `
+          <div class="flex items-center gap-1">
+            <span class="text-[10px] font-mono font-extrabold tracking-wider ${isSelected ? 'text-sky-100' : 'text-slate-400 dark:text-slate-300'}">${shortWeekdays[d.getDay()]}</span>
+            ${isToday ? `<span class="w-1.5 h-1.5 rounded-full ${isSelected ? 'bg-white' : 'bg-sky-400'}" title="Hoje"></span>` : ''}
+          </div>
+          <span class="font-display text-sm font-black mt-0.5">${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}</span>
+          <span class="text-[9px] font-mono mt-0.5 ${isSelected ? 'text-sky-100' : (filledCount > 0 ? 'text-emerald-500 dark:text-emerald-400 font-bold' : 'text-slate-400 dark:text-slate-400')}">
+            ${filledCount > 0 ? `${filledCount}h ocup.` : 'Livre'}
+          </span>
+        `;
+        container.appendChild(btn);
+      }
+    }
+
+    // ============================================================================
+    // CORES & ESTILOS DE CÉLULA (CINZA-ESCURO SUAVE NO TEMA NAVY)
+    // ============================================================================
+    function getDefaultCellBg() {
+      const isDark = document.documentElement.classList.contains('dark');
+      return isDark ? '#263040' : '#ffffff';
+    }
+
+    function getDefaultCellText() {
+      const isDark = document.documentElement.classList.contains('dark');
+      return isDark ? '#f1f5f9' : '#0f172a';
+    }
+
+    function getTextColorForBackground(bgColor) {
+      if (!bgColor || bgColor === '#263040' || bgColor === '#18181f' || bgColor === '#1e1e24' || bgColor === '#ffffff') {
+        return getDefaultCellText();
+      }
+      let hex = bgColor.replace('#', '');
+      if (hex.length === 3) hex = hex.split('').map(c => c + c).join('');
+      const r = parseInt(hex.substring(0, 2), 16) || 0;
+      const g = parseInt(hex.substring(2, 4), 16) || 0;
+      const b = parseInt(hex.substring(4, 6), 16) || 0;
+      const yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
+      return (yiq >= 140) ? '#0f172a' : '#ffffff';
+    }
+
+    function getPresetColorForText(text) {
+      if (!text) return null;
+      const upper = text.trim().toUpperCase();
+      if (upper.startsWith('URGENTE:') || upper.startsWith('IMPORTANTE:') || upper.includes('[!]')) return '#e11d48';
+      if (upper.startsWith('FOCO:') || upper.startsWith('DEEP:')) return '#0284c7';
+      if (upper.startsWith('TREINO') || upper.startsWith('ACADEMIA') || upper.startsWith('SAÚDE:')) return '#10b981';
+      if (upper.startsWith('SONO') || upper.startsWith('DORMIR')) return '#172554';
+      if (upper.startsWith('ESTUDO:') || upper.startsWith('AULA:')) return '#7c3aed';
+      if (upper.startsWith('REUNIÃO') || upper.startsWith('MEETING')) return '#f97316';
+      return null;
+    }
+
+    function renderFixedColorPalette() {
+      const container = document.getElementById('fixed-color-palette');
+      if (!container) return;
+      container.innerHTML = '';
+
+      PALETTE_COLORS.forEach(c => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'w-5 h-5 rounded-full border border-slate-400/50 hover:scale-125 transition-transform shadow-sm cursor-pointer';
+        btn.style.backgroundColor = c.code;
+        btn.title = c.name;
+
+        btn.addEventListener('mousedown', (e) => e.preventDefault());
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          const targetColor = (c.code === '#263040') ? '' : c.code;
+          applyColorToSelection(targetColor);
+        });
+
+        container.appendChild(btn);
+      });
+
+      const customPicker = document.createElement('input');
+      customPicker.type = 'color';
+      customPicker.value = '#0284c7';
+      customPicker.title = 'Escolher qualquer cor personalizada...';
+      customPicker.className = 'w-5 h-5 rounded-full cursor-pointer bg-transparent border-0 p-0 hover:scale-110 transition-transform ml-1';
+      customPicker.addEventListener('change', (e) => {
+        applyColorToSelection(e.target.value);
+      });
+      container.appendChild(customPicker);
+    }
+
+    function applyColorToSelection(targetColor) {
+      if (selectedCellsMap.size > 0) {
+        selectedCellsMap.forEach((inputEl, cellKey) => {
+          applyColorToKey(cellKey, targetColor, inputEl);
+        });
+      } else if (lastFocusedCellInput && lastFocusedCellKey) {
+        applyColorToKey(lastFocusedCellKey, targetColor, lastFocusedCellInput);
+      } else {
+        showToast('⚠️ Clique primeiro em uma célula de horário para pintá-la.');
+      }
+    }
+
+    function persistDatabase() {
+      localStorage.setItem(STORAGE_KEYS.DB, JSON.stringify(database));
+      localStorage.setItem(STORAGE_KEYS.UPDATED_AT, String(Date.now()));
+      updateDayStats();
+      renderWeekStrip();
+      scheduleCloudPush();
+    }
+
+    function getCellKeyForHour(hourIdx) {
+      return `${currentDateISO}|${hourIdx}`;
+    }
+
+    function applyColorToKey(cellKey, targetColor, inputEl) {
+      if (cellKey.includes('|slot')) {
+        const parts = cellKey.split('|');
+        const slotId = parts[parts.length - 1];
+        const realKey = parts.slice(0, -1).join('|');
+
+        let cellObj = database[realKey];
+        if (typeof cellObj !== 'object' || cellObj === null || !cellObj.isSplit) {
+          cellObj = {
+            isSplit: true,
+            text1: (typeof cellObj === 'object' && cellObj) ? (cellObj.text || '') : (cellObj || ''),
+            color1: (typeof cellObj === 'object' && cellObj) ? (cellObj.color || '') : '',
+            text2: '',
+            color2: ''
+          };
+        }
+
+        if (inputEl && inputEl.value !== undefined) {
+          if (slotId === 'slot1') cellObj.text1 = inputEl.value;
+          else if (slotId === 'slot2') cellObj.text2 = inputEl.value;
+        }
+
+        if (slotId === 'slot1') cellObj.color1 = targetColor;
+        else if (slotId === 'slot2') cellObj.color2 = targetColor;
+
+        database[realKey] = cellObj;
+        persistDatabase();
+
+        if (inputEl) {
+          applySubCellStyle(inputEl, inputEl.value || '', targetColor, slotId === 'slot1' ? 'top' : 'bottom');
+        }
+      } else {
+        const text = inputEl ? inputEl.value : (typeof database[cellKey] === 'object' ? database[cellKey].text : database[cellKey]);
+        updateCellState(cellKey, text || '', targetColor, inputEl);
+      }
+    }
+
+    function applyCellStyle(inputElement, text, color) {
+      inputElement.className = `excel-cell w-full h-full px-3 py-1.5 rounded-xl font-medium border border-slate-200/80 dark:border-[#364459] focus:ring-2 focus:ring-sky-400 resize-none overflow-hidden flex items-center text-xs md:text-sm leading-snug transition-colors placeholder-slate-400 dark:placeholder-slate-400/60`;
+
+      if (color) {
+        inputElement.style.backgroundColor = color;
+        inputElement.style.color = getTextColorForBackground(color);
+        inputElement.style.fontWeight = '600';
+      } else {
+        inputElement.style.backgroundColor = getDefaultCellBg();
+        inputElement.style.color = getDefaultCellText();
+        inputElement.style.fontWeight = text && text.trim() ? '500' : '400';
+      }
+    }
+
+    function applySubCellStyle(inputElement, text, color, position) {
+      const roundClass = (position === 'top') ? 'rounded-t-xl rounded-b-none' : 'rounded-b-xl rounded-t-none';
+      inputElement.className = `excel-cell w-full flex-1 px-3 py-1 font-medium border-0 outline-none focus:ring-1 focus:ring-sky-400 resize-none overflow-hidden flex items-center text-xs leading-tight transition-colors placeholder-slate-400 dark:placeholder-slate-400/60 ${roundClass}`;
+
+      if (color) {
+        inputElement.style.backgroundColor = color;
+        inputElement.style.color = getTextColorForBackground(color);
+        inputElement.style.fontWeight = '600';
+      } else {
+        inputElement.style.backgroundColor = getDefaultCellBg();
+        inputElement.style.color = getDefaultCellText();
+      }
+    }
+
+    function updateCellState(key, text, color, inputElement) {
+      if (!text.trim() && !color) {
+        delete database[key];
+      } else {
+        database[key] = { text: text, color: color };
+      }
+      if (inputElement) applyCellStyle(inputElement, text, color);
+      persistDatabase();
+    }
+
+    function updateSplitCellState(key, text1, color1, text2, color2) {
+      if (!text1.trim() && !text2.trim() && !color1 && !color2) {
+        delete database[key];
+      } else {
+        database[key] = { isSplit: true, text1, color1, text2, color2 };
+      }
+      persistDatabase();
+    }
+
+    // ============================================================================
+    // CONSTRUÇÃO DE CADA CÉLULA DE 1 HORA (E SUB-CÉLULAS DE 30M)
+    // ============================================================================
+    function createEditableCell(hourObj, key, rawVal) {
+      const td = document.createElement('td');
+      td.className = 'p-1 align-middle h-14 relative';
+
+      let isSplit = false;
+      let text1 = '', color1 = '', text2 = '', color2 = '';
+      let textVal = '', colorVal = '';
+
+      if (typeof rawVal === 'object' && rawVal !== null) {
+        if (rawVal.isSplit) {
+          isSplit = true;
+          text1 = rawVal.text1 || '';
+          color1 = rawVal.color1 || '';
+          text2 = rawVal.text2 || '';
+          color2 = rawVal.color2 || '';
+        } else {
+          textVal = rawVal.text || '';
+          colorVal = rawVal.color || '';
+        }
+      } else if (typeof rawVal === 'string') {
+        textVal = rawVal;
+      }
+
+      if (isSplit) {
+        const container = document.createElement('div');
+        container.className = 'w-full h-full flex flex-col rounded-xl overflow-hidden border border-slate-300 dark:border-[#3b4a61]';
+
+        const hourPrefix = String(hourObj.index).padStart(2, '0');
+
+        const wrap1 = document.createElement('div');
+        wrap1.className = 'relative flex-1 flex items-center';
+        const badge1 = document.createElement('span');
+        badge1.className = 'absolute right-2 top-1 text-[9px] font-mono opacity-45 pointer-events-none select-none';
+        badge1.textContent = `${hourPrefix}:00`;
+
+        const input1 = document.createElement('textarea');
+        input1.rows = 1;
+        input1.value = text1;
+        input1.placeholder = `${hourPrefix}:00 - ${hourPrefix}:30...`;
+        applySubCellStyle(input1, text1, color1, 'top');
+
+        wrap1.appendChild(input1);
+        wrap1.appendChild(badge1);
+
+        const divider = document.createElement('div');
+        divider.className = 'w-full h-[1px] bg-slate-300 dark:bg-[#3b4a61] shrink-0';
+
+        const wrap2 = document.createElement('div');
+        wrap2.className = 'relative flex-1 flex items-center';
+        const badge2 = document.createElement('span');
+        badge2.className = 'absolute right-2 top-1 text-[9px] font-mono opacity-45 pointer-events-none select-none';
+        badge2.textContent = `${hourPrefix}:30`;
+
+        const input2 = document.createElement('textarea');
+        input2.rows = 1;
+        input2.value = text2;
+        input2.placeholder = `${hourPrefix}:30 - ${String((hourObj.index + 1) % 24).padStart(2, '0')}:00...`;
+        applySubCellStyle(input2, text2, color2, 'bottom');
+
+        wrap2.appendChild(input2);
+        wrap2.appendChild(badge2);
+
+        const slot1Key = `${key}|slot1`;
+        const slot2Key = `${key}|slot2`;
+
+        const handleSelectSub = (slotK, inpEl) => (e) => {
+          lastFocusedCellInput = inpEl;
+          lastFocusedCellKey = slotK;
+          if (e && (e.ctrlKey || e.metaKey)) {
+            if (selectedCellsMap.has(slotK)) {
+              selectedCellsMap.delete(slotK);
+              inpEl.classList.remove('ring-2', 'ring-sky-400', 'z-10');
+            } else {
+              selectedCellsMap.set(slotK, inpEl);
+              inpEl.classList.add('ring-2', 'ring-sky-400', 'z-10');
+            }
+          } else {
+            selectedCellsMap.forEach(el => el.classList.remove('ring-2', 'ring-sky-400', 'z-10'));
+            selectedCellsMap.clear();
+            selectedCellsMap.set(slotK, inpEl);
+            inpEl.classList.add('ring-2', 'ring-sky-400', 'z-10');
+          }
+        };
+
+        input1.addEventListener('click', handleSelectSub(slot1Key, input1));
+        input1.addEventListener('focus', handleSelectSub(slot1Key, input1));
+        input2.addEventListener('click', handleSelectSub(slot2Key, input2));
+        input2.addEventListener('focus', handleSelectSub(slot2Key, input2));
+
+        input1.addEventListener('input', (e) => {
+          const val1 = e.target.value;
+          if (val1.includes('1:') || val1.includes('/1:')) {
+            const cleanText = val1.replace(/\/?1:/g, '').trim() || text2;
+            const chosenColor = getPresetColorForText(cleanText) || color1 || color2 || '';
+            database[key] = cleanText ? { text: cleanText, color: chosenColor } : '';
+            persistDatabase();
+            renderGrid();
+            return;
+          }
+          const autoC = getPresetColorForText(val1);
+          if (autoC) color1 = autoC;
+          text1 = val1;
+          applySubCellStyle(input1, text1, color1, 'top');
+          updateSplitCellState(key, text1, color1, text2, color2);
+        });
+
+        input2.addEventListener('input', (e) => {
+          const val2 = e.target.value;
+          if (val2.includes('1:') || val2.includes('/1:')) {
+            const cleanText = val2.replace(/\/?1:/g, '').trim() || text1;
+            const chosenColor = getPresetColorForText(cleanText) || color2 || color1 || '';
+            database[key] = cleanText ? { text: cleanText, color: chosenColor } : '';
+            persistDatabase();
+            renderGrid();
+            return;
+          }
+          const autoC = getPresetColorForText(val2);
+          if (autoC) color2 = autoC;
+          text2 = val2;
+          applySubCellStyle(input2, text2, color2, 'bottom');
+          updateSplitCellState(key, text1, color1, text2, color2);
+        });
+
+        input1.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            input2.focus();
+          } else if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            input2.focus();
+          } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            focusHourCell((hourObj.index + 23) % 24);
+          }
+        });
+
+        input2.addEventListener('keydown', (e) => {
+          if ((e.key === 'Enter' && !e.shiftKey) || e.key === 'ArrowDown') {
+            e.preventDefault();
+            focusHourCell((hourObj.index + 1) % 24);
+          } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            input1.focus();
+          }
+        });
+
+        container.appendChild(wrap1);
+        container.appendChild(divider);
+        container.appendChild(wrap2);
+        td.appendChild(container);
+      } else {
+        const preset = getPresetColorForText(textVal);
+        if (preset && !colorVal) colorVal = preset;
+
+        const input = document.createElement('textarea');
+        input.rows = 1;
+        input.value = textVal;
+        input.placeholder = 'Livre...';
+        input.dataset.hourIdx = hourObj.index;
+        input.dataset.cellKey = key;
+        applyCellStyle(input, textVal, colorVal);
+
+        const handleCellSelect = (e) => {
+          if (e && e.shiftKey && lastFocusedCellKey && !lastFocusedCellKey.includes('|slot')) {
+            const prevHour = parseInt(lastFocusedCellKey.split('|')[1], 10);
+            const curHour = hourObj.index;
+            if (!isNaN(prevHour)) {
+              const minH = Math.min(prevHour, curHour);
+              const maxH = Math.max(prevHour, curHour);
+              selectedCellsMap.forEach(el => el.classList.remove('ring-2', 'ring-sky-400', 'z-10'));
+              selectedCellsMap.clear();
+              for (let h = minH; h <= maxH; h++) {
+                const k = getCellKeyForHour(h);
+                const el = document.querySelector(`textarea[data-cell-key="${k}"]`);
+                if (el) {
+                  selectedCellsMap.set(k, el);
+                  el.classList.add('ring-2', 'ring-sky-400', 'z-10');
+                }
+              }
+            }
+          } else if (e && (e.ctrlKey || e.metaKey)) {
+            if (selectedCellsMap.has(key)) {
+              selectedCellsMap.delete(key);
+              input.classList.remove('ring-2', 'ring-sky-400', 'z-10');
+            } else {
+              selectedCellsMap.set(key, input);
+              input.classList.add('ring-2', 'ring-sky-400', 'z-10');
+            }
+          } else {
+            selectedCellsMap.forEach(el => el.classList.remove('ring-2', 'ring-sky-400', 'z-10'));
+            selectedCellsMap.clear();
+            selectedCellsMap.set(key, input);
+            input.classList.add('ring-2', 'ring-sky-400', 'z-10');
+          }
+          lastFocusedCellInput = input;
+          lastFocusedCellKey = key;
+        };
+
+        input.addEventListener('click', handleCellSelect);
+        input.addEventListener('focus', () => {
+          lastFocusedCellInput = input;
+          lastFocusedCellKey = key;
+        });
+
+        input.addEventListener('keydown', (e) => {
+          if ((e.key === 'Enter' && !e.shiftKey) || e.key === 'ArrowDown') {
+            e.preventDefault();
+            focusHourCell((hourObj.index + 1) % 24);
+          } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            focusHourCell((hourObj.index + 23) % 24);
+          } else if (e.key === 'Escape') {
+            selectedCellsMap.forEach(el => el.classList.remove('ring-2', 'ring-sky-400', 'z-10'));
+            selectedCellsMap.clear();
+            input.blur();
+          }
+        });
+
+        input.addEventListener('input', (e) => {
+          const newText = e.target.value;
+
+          if (newText.includes('2:') || newText.includes('/2:')) {
+            const parts = newText.split(/\/?2:/);
+            const t1 = parts[0].trim();
+            const t2 = parts.slice(1).join('2:').trim();
+            const c1 = getPresetColorForText(t1) || colorVal || '';
+            const c2 = getPresetColorForText(t2) || '';
+
+            database[key] = { isSplit: true, text1: t1, color1: c1, text2: t2, color2: c2 };
+            persistDatabase();
+            renderGrid();
+            return;
+          }
+
+          const autoPreset = getPresetColorForText(newText);
+
+          if (selectedCellsMap.has(key) && selectedCellsMap.size > 1) {
+            selectedCellsMap.forEach((inputEl, cellKey) => {
+              inputEl.value = newText;
+              let cColor = '';
+              if (autoPreset) {
+                cColor = autoPreset;
+              } else if (database[cellKey] && typeof database[cellKey] === 'object') {
+                cColor = database[cellKey].color || '';
+              }
+              updateCellState(cellKey, newText, cColor, inputEl);
+            });
+          } else {
+            let curColor = colorVal;
+            if (autoPreset) {
+              curColor = autoPreset;
+              colorVal = autoPreset;
+            }
+            updateCellState(key, newText, curColor, input);
+          }
+        });
+
+        td.appendChild(input);
+      }
+
+      return td;
+    }
+
+    function focusHourCell(targetHourIdx) {
+      const targetKey = getCellKeyForHour(targetHourIdx);
+      const el = document.querySelector(`textarea[data-cell-key="${targetKey}"]`);
+      if (el) {
+        selectedCellsMap.forEach(item => item.classList.remove('ring-2', 'ring-sky-400', 'z-10'));
+        selectedCellsMap.clear();
+        selectedCellsMap.set(targetKey, el);
+        el.classList.add('ring-2', 'ring-sky-400', 'z-10');
+        el.focus();
+      }
+    }
+
+    function createHourLabelCell(hourObj, isCurrentHour) {
+      const td = document.createElement('td');
+      const highlightClasses = isCurrentHour
+        ? 'bg-sky-500/20 dark:bg-sky-500/25 text-sky-700 dark:text-sky-300 border-l-4 border-l-sky-400'
+        : 'bg-slate-100 dark:bg-[#1a2330] text-slate-600 dark:text-slate-300 hover:bg-slate-200/70 dark:hover:bg-[#232f40]';
+
+      td.className = `px-2 py-1 text-center font-mono border-r border-slate-200 dark:border-[#323f52] select-none cursor-pointer transition-colors ${highlightClasses}`;
+      td.title = 'Duplo clique para dividir em 30m (:00 / :30) ou unir em 1h';
+      td.innerHTML = `
+        <div class="flex flex-col items-center justify-center leading-tight">
+          <div class="flex items-center gap-1">
+            <span class="text-[10px] opacity-80">${hourObj.periodIcon}</span>
+            <span class="text-xs font-extrabold tracking-tight text-slate-900 dark:text-slate-100">${hourObj.short}</span>
+            ${isCurrentHour ? `<span class="current-hour-badge text-[8px] font-black px-1.5 py-0.2 rounded bg-sky-500 text-white uppercase">AGORA</span>` : ''}
+          </div>
+          <span class="text-[9px] text-slate-400 dark:text-slate-400">${hourObj.label}</span>
+        </div>
+      `;
+
+      td.addEventListener('dblclick', () => {
+        lastFocusedCellKey = getCellKeyForHour(hourObj.index);
+        splitOrMergeFocusedSlot();
+      });
+
+      return td;
+    }
+
+    // ============================================================================
+    // RENDERIZAÇÃO DA TABELA DE 24 HORAS (SPLIT 12H/12H OU CONTÍNUA 24H)
+    // ============================================================================
+    function renderGrid() {
+      selectedCellsMap.clear();
+      const thead = document.getElementById('grid-thead');
+      const tbody = document.getElementById('excel-grid-body');
+      if (!thead || !tbody) return;
+
+      thead.innerHTML = '';
+      tbody.innerHTML = '';
+
+      const isTodayView = (currentDateISO === getTodayISO());
+      const nowHour = new Date().getHours();
+
+      if (layoutMode === 'split') {
+        thead.innerHTML = `
+          <tr>
+            <th class="p-2.5 w-28 md:w-32 text-center border-r border-slate-200 dark:border-[#323f52] font-mono text-[10px]">HORÁRIO (AM)</th>
+            <th class="p-2.5 border-r border-slate-200 dark:border-[#323f52] text-xs">
+              <div class="flex items-center justify-between">
+                <span>🌌 Madrugada & ☀️ Manhã (00:00 — 12:00)</span>
+                <span class="text-[10px] font-mono text-sky-500 dark:text-sky-400">12 Blocos de 1h</span>
+              </div>
+            </th>
+            <th class="p-2.5 w-28 md:w-32 text-center border-x-2 border-sky-500/40 font-mono text-[10px]">HORÁRIO (PM)</th>
+            <th class="p-2.5 text-xs">
+              <div class="flex items-center justify-between">
+                <span>🌤️ Tarde & 🌙 Noite (12:00 — 00:00)</span>
+                <span class="text-[10px] font-mono text-indigo-500 dark:text-indigo-300">12 Blocos de 1h</span>
+              </div>
+            </th>
+          </tr>
+        `;
+
+        for (let i = 0; i < 12; i++) {
+          const hourAM = HOURS_24[i];
+          const hourPM = HOURS_24[i + 12];
+
+          const tr = document.createElement('tr');
+          tr.className = 'hover:bg-slate-100/70 dark:hover:bg-[#222c3c] transition-colors';
+
+          const keyAM = getCellKeyForHour(hourAM.index);
+          const tdTimeAM = createHourLabelCell(hourAM, isTodayView && nowHour === hourAM.index);
+          const tdSlotAM = createEditableCell(hourAM, keyAM, database[keyAM]);
+          tdSlotAM.className += ' border-r border-slate-200 dark:border-[#323f52]';
+
+          const keyPM = getCellKeyForHour(hourPM.index);
+          const tdTimePM = createHourLabelCell(hourPM, isTodayView && nowHour === hourPM.index);
+          tdTimePM.className += ' border-l-2 border-l-sky-500/30';
+          const tdSlotPM = createEditableCell(hourPM, keyPM, database[keyPM]);
+
+          tr.appendChild(tdTimeAM);
+          tr.appendChild(tdSlotAM);
+          tr.appendChild(tdTimePM);
+          tr.appendChild(tdSlotPM);
+
+          tbody.appendChild(tr);
+        }
+      } else {
+        thead.innerHTML = `
+          <tr>
+            <th class="p-2 w-24 sm:w-32 md:w-36 text-center border-r border-slate-200 dark:border-[#323f52] font-mono text-[10px]">HORÁRIO</th>
+            <th class="p-2.5 text-xs">
+              <div class="flex items-center justify-between">
+                <span>📅 Linha do Tempo Diária (00:00 — 23:59)</span>
+                <span class="text-[10px] font-mono text-sky-500 dark:text-sky-400 hidden sm:inline">24 Células de 1h</span>
+              </div>
+            </th>
+          </tr>
+        `;
+
+        HOURS_24.forEach(hourObj => {
+          const tr = document.createElement('tr');
+          tr.className = 'hover:bg-slate-100/70 dark:hover:bg-[#222c3c] transition-colors';
+
+          const key = getCellKeyForHour(hourObj.index);
+          const tdTime = createHourLabelCell(hourObj, isTodayView && nowHour === hourObj.index);
+          const tdSlot = createEditableCell(hourObj, key, database[key]);
+
+          tr.appendChild(tdTime);
+          tr.appendChild(tdSlot);
+          tbody.appendChild(tr);
+        });
+      }
+
+      updateDayStats();
+    }
+
+    // ============================================================================
+    // ESTATÍSTICAS, PRIORIDADES E NOTAS DO DIA
+    // ============================================================================
+    function isSlotFilled(val) {
+      if (!val) return false;
+      if (typeof val === 'object') {
+        if (val.isSplit) {
+          return !!(val.text1 && val.text1.trim()) || !!(val.text2 && val.text2.trim()) || !!val.color1 || !!val.color2;
+        }
+        return !!(val.text && val.text.trim()) || !!val.color;
+      }
+      return typeof val === 'string' && val.trim() !== '';
+    }
+
+    function updateDayStats() {
+      let busyHours = 0;
+
+      for (let h = 0; h < 24; h++) {
+        const key = getCellKeyForHour(h);
+        const val = database[key];
+        if (!val) continue;
+
+        if (typeof val === 'object' && val.isSplit) {
+          if ((val.text1 && val.text1.trim()) || val.color1) busyHours += 0.5;
+          if ((val.text2 && val.text2.trim()) || val.color2) busyHours += 0.5;
+        } else if (isSlotFilled(val)) {
+          busyHours += 1;
+        }
+      }
+
+      const freeHours = Math.max(0, 24 - busyHours);
+      const percent = Math.round((busyHours / 24) * 100);
+
+      const elBusy = document.getElementById('stat-busy-hours');
+      const elFree = document.getElementById('stat-free-hours');
+      const elPercent = document.getElementById('stat-percent-day');
+      const elBar = document.getElementById('stat-progress-bar');
+
+      if (elBusy) elBusy.textContent = `${Number.isInteger(busyHours) ? busyHours : busyHours.toFixed(1)}h`;
+      if (elFree) elFree.textContent = `${Number.isInteger(freeHours) ? freeHours : freeHours.toFixed(1)}h`;
+      if (elPercent) elPercent.textContent = `${percent}%`;
+      if (elBar) elBar.style.width = `${percent}%`;
+    }
+
+    function ensureMetaStructure(metaKey) {
+      if (!dailyMeta[metaKey]) {
+        dailyMeta[metaKey] = {
+          notes: '',
+          priorities: [
+            { text: '', done: false },
+            { text: '', done: false },
+            { text: '', done: false }
+          ]
+        };
+      }
+      return dailyMeta[metaKey];
+    }
+
+    function renderDailySidebar() {
+      const data = ensureMetaStructure(currentDateISO);
+
+      const notesEl = document.getElementById('daily-notes-area');
+      if (notesEl) {
+        notesEl.value = data.notes || '';
+      }
+
+      const listEl = document.getElementById('daily-priorities-list');
+      const counterEl = document.getElementById('priorities-counter');
+      if (!listEl) return;
+
+      listEl.innerHTML = '';
+      let doneCount = 0;
+
+      data.priorities.forEach((item, idx) => {
+        if (item.done && item.text.trim()) doneCount++;
+
+        const row = document.createElement('div');
+        row.className = 'flex items-center gap-2 bg-white dark:bg-[#1e2633] border border-slate-200 dark:border-[#323f52] rounded-xl px-2.5 py-1.5';
+
+        const cb = document.createElement('input');
+        cb.type = 'checkbox';
+        cb.checked = !!item.done;
+        cb.className = 'w-4 h-4 rounded accent-sky-500 cursor-pointer';
+        cb.onchange = () => {
+          item.done = cb.checked;
+          saveDailyMeta();
+          renderDailySidebar();
+        };
+
+        const inp = document.createElement('input');
+        inp.type = 'text';
+        inp.value = item.text || '';
+        inp.placeholder = `Prioridade #${idx + 1}...`;
+        inp.className = `w-full bg-transparent text-xs outline-none placeholder-slate-400 dark:placeholder-slate-400/70 ${item.done ? 'line-through text-slate-400 dark:text-slate-400' : 'text-slate-800 dark:text-slate-100 font-medium'}`;
+        inp.oninput = () => {
+          item.text = inp.value;
+          saveDailyMeta();
+        };
+
+        row.appendChild(cb);
+        row.appendChild(inp);
+        listEl.appendChild(row);
+      });
+
+      if (counterEl) counterEl.textContent = `${doneCount}/3`;
+    }
+
+    function saveDailyNotes(val) {
+      const data = ensureMetaStructure(currentDateISO);
+      data.notes = val;
+      saveDailyMeta();
+    }
+
+    function saveDailyMeta() {
+      localStorage.setItem(STORAGE_KEYS.META, JSON.stringify(dailyMeta));
+      localStorage.setItem(STORAGE_KEYS.UPDATED_AT, String(Date.now()));
+      scheduleCloudPush();
+    }
+
+    // ============================================================================
+    // FERRAMENTAS DE PRODUTIVIDADE INTERNAS (ATALHOS E AÇÕES)
+    // ============================================================================
+    function splitOrMergeFocusedSlot() {
+      if (!lastFocusedCellKey) return;
+
+      const realKey = lastFocusedCellKey.includes('|slot')
+        ? lastFocusedCellKey.split('|').slice(0, -1).join('|')
+        : lastFocusedCellKey;
+
+      const curVal = database[realKey];
+      if (typeof curVal === 'object' && curVal !== null && curVal.isSplit) {
+        const mergedText = [curVal.text1, curVal.text2].filter(Boolean).join(' / ');
+        const mergedColor = curVal.color1 || curVal.color2 || '';
+        if (mergedText || mergedColor) {
+          database[realKey] = { text: mergedText, color: mergedColor };
+        } else {
+          delete database[realKey];
+        }
+        showToast('🔗 Bloco unido em 1 hora completa');
+      } else {
+        const t1 = (typeof curVal === 'object' && curVal) ? (curVal.text || '') : (curVal || '');
+        const c1 = (typeof curVal === 'object' && curVal) ? (curVal.color || '') : '';
+        database[realKey] = { isSplit: true, text1: t1, color1: c1, text2: '', color2: '' };
+        showToast('✂️ Célula dividida em 2 blocos de 30 minutos');
+      }
+
+      persistDatabase();
+      renderGrid();
+    }
+
+    function copySelectedSlots() {
+      clipboardSlots = [];
+
+      if (selectedCellsMap.size > 0) {
+        selectedCellsMap.forEach((inputEl, cellKey) => {
+          const realKey = cellKey.includes('|slot') ? cellKey.split('|').slice(0, -1).join('|') : cellKey;
+          const val = database[realKey];
+          clipboardSlots.push({
+            text: inputEl.value,
+            color: (typeof val === 'object' && val) ? (val.color || val.color1 || '') : ''
+          });
+        });
+      } else if (lastFocusedCellKey && lastFocusedCellInput) {
+        const realKey = lastFocusedCellKey.includes('|slot') ? lastFocusedCellKey.split('|').slice(0, -1).join('|') : lastFocusedCellKey;
+        const val = database[realKey];
+        clipboardSlots.push({
+          text: lastFocusedCellInput.value,
+          color: (typeof val === 'object' && val) ? (val.color || val.color1 || '') : ''
+        });
+      }
+
+      if (clipboardSlots.length > 0) {
+        showToast(`📋 ${clipboardSlots.length} horário(s) copiado(s)!`);
+      }
+    }
+
+    function pasteSelectedSlots() {
+      if (!clipboardSlots.length) return;
+
+      const targets = [];
+      if (selectedCellsMap.size > 0) {
+        selectedCellsMap.forEach((inputEl, cellKey) => targets.push({ key: cellKey, input: inputEl }));
+      } else if (lastFocusedCellKey && lastFocusedCellInput) {
+        targets.push({ key: lastFocusedCellKey, input: lastFocusedCellInput });
+      }
+
+      if (!targets.length) return;
+
+      targets.forEach((t, idx) => {
+        const src = clipboardSlots[idx % clipboardSlots.length];
+        t.input.value = src.text;
+        const autoColor = getPresetColorForText(src.text);
+        const finalColor = autoColor || src.color;
+        if (t.key.includes('|slot')) {
+          applyColorToKey(t.key, finalColor, t.input);
+        } else {
+          updateCellState(t.key, src.text, finalColor, t.input);
+        }
+      });
+
+      showToast(`📥 Colado em ${targets.length} célula(s)!`);
+    }
+
+    function copyFromYesterday() {
+      const d = parseISODate(currentDateISO);
+      d.setDate(d.getDate() - 1);
+      const yesterdayISO = formatISODate(d);
+
+      let copied = 0;
+      for (let h = 0; h < 24; h++) {
+        const srcVal = database[`${yesterdayISO}|${h}`];
+        if (isSlotFilled(srcVal)) {
+          database[`${currentDateISO}|${h}`] = JSON.parse(JSON.stringify(srcVal));
+          copied++;
+        }
+      }
+
+      if (copied === 0) {
+        showToast('⚠️ O dia anterior não possui horários preenchidos.');
+        return;
+      }
+
+      persistDatabase();
+      renderGrid();
+      showToast(`⏪ ${copied} horário(s) copiados de ontem (${yesterdayISO.split('-').reverse().join('/')})!`);
+    }
+
+    function clearCurrentDay() {
+      const label = `o dia ${currentDateISO.split('-').reverse().join('/')}`;
+      if (!confirm(`Tem certeza que deseja limpar todos os horários de ${label}?`)) return;
+
+      for (let h = 0; h < 24; h++) {
+        delete database[getCellKeyForHour(h)];
+      }
+      persistDatabase();
+      renderGrid();
+      showToast('🗑️ Horários do dia limpos!');
+    }
+
+    // ============================================================================
+    // BACKUP LOCAL (EXPORTAR / IMPORTAR JSON)
+    // ============================================================================
+    function exportBackupJSON() {
+      const payload = {
+        app: 'Agendophobia',
+        version: '1.2.0',
+        exportedAt: new Date().toISOString(),
+        database,
+        dailyMeta
+      };
+      const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(payload, null, 2));
+      const a = document.createElement('a');
+      a.setAttribute('href', dataStr);
+      a.setAttribute('download', `Agendophobia_Backup_${currentDateISO}.json`);
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      showToast('📥 Backup local exportado com sucesso!');
+    }
+
+    function importBackupJSON(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (evt) => {
+        try {
+          const parsed = JSON.parse(evt.target.result);
+          if (parsed.database) database = parsed.database;
+          if (parsed.dailyMeta) dailyMeta = parsed.dailyMeta;
+
+          localStorage.setItem(STORAGE_KEYS.DB, JSON.stringify(database));
+          localStorage.setItem(STORAGE_KEYS.META, JSON.stringify(dailyMeta));
+          localStorage.setItem(STORAGE_KEYS.UPDATED_AT, String(Date.now()));
+
+          renderAll();
+          scheduleCloudPush();
+          showToast('📤 Backup restaurado e sincronizado!');
+        } catch (err) {
+          alert('Arquivo JSON inválido.');
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    // ============================================================================
+    // RELÓGIO AO VIVO E ATALHOS DE TECLADO
+    // ============================================================================
+    function updateLiveClock() {
+      const el = document.getElementById('live-clock');
+      if (!el) return;
+      const now = new Date();
+      el.textContent = now.toLocaleTimeString('pt-BR');
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast-save');
+      const text = document.getElementById('toast-text');
+      if (!toast || !text) return;
+      text.textContent = msg;
+      toast.style.opacity = '1';
+      toast.style.transform = 'translateY(0)';
+      clearTimeout(window._toastTimer);
+      window._toastTimer = setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(-10px)';
+      }, 2200);
+    }
+
+    function setupKeyboardShortcuts() {
+      document.addEventListener('keydown', (e) => {
+        if (!activeGitHubToken && !document.getElementById('login-modal').classList.contains('hidden')) return;
+
+        if (e.altKey && e.key === 'ArrowLeft') {
+          e.preventDefault();
+          navigateDay(-1);
+          return;
+        }
+        if (e.altKey && e.key === 'ArrowRight') {
+          e.preventDefault();
+          navigateDay(1);
+          return;
+        }
+
+        const activeEl = document.activeElement;
+        const isCellTextarea = activeEl && activeEl.classList.contains('excel-cell');
+
+        const isTyping = activeEl && (activeEl.tagName === 'TEXTAREA' || activeEl.tagName === 'INPUT');
+        if (!isTyping && e.key === 'ArrowLeft') {
+          e.preventDefault();
+          navigateDay(-1);
+          return;
+        }
+        if (!isTyping && e.key === 'ArrowRight') {
+          e.preventDefault();
+          navigateDay(1);
+          return;
+        }
+
+        if ((e.ctrlKey || e.metaKey) && (e.key === 'c' || e.key === 'C')) {
+          if (isCellTextarea && activeEl.selectionStart !== activeEl.selectionEnd) return;
+          if (selectedCellsMap.size > 0 || lastFocusedCellKey) {
+            e.preventDefault();
+            copySelectedSlots();
+          }
+        }
+
+        if ((e.ctrlKey || e.metaKey) && (e.key === 'v' || e.key === 'V')) {
+          if (isCellTextarea && activeEl.value.length > 0 && activeEl.selectionStart !== activeEl.selectionEnd) return;
+          if (clipboardSlots.length > 0) {
+            e.preventDefault();
+            pasteSelectedSlots();
+          }
+        }
+      });
+    }
+
+    function renderAll() {
+      renderHeaderDateInfo();
+      renderGrid();
+      renderDailySidebar();
+    }
+
+    function init() {
+      initTheme();
+      setupLoginForm();
+      updateLayoutButtonUI();
+      renderFixedColorPalette();
+      setupKeyboardShortcuts();
+      updateLiveClock();
+      setInterval(updateLiveClock, 1000);
+
+      if (!checkSavedSession()) {
+        document.getElementById('input-username')?.focus();
+      }
+
+      // Sincroniza quando a aba volta ao foco (útil ao alternar entre celular e PC)
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible' && activeGitHubToken) {
+          pullFromGitHubCloud(false);
+        }
+      });
+
+      window.addEventListener('resize', () => {
+        const nowMobile = isMobileViewport();
+        if (nowMobile !== lastWasMobile) {
+          lastWasMobile = nowMobile;
+          layoutMode = nowMobile
+            ? 'single'
+            : (localStorage.getItem(STORAGE_KEYS.LAYOUT) || 'split');
+          updateLayoutButtonUI();
+          renderGrid();
+        }
+      });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+  </script>
+</body>
+</html>
