@@ -191,14 +191,24 @@
        ========================================================================== -->
   <div id="app-container" class="hidden relative z-10 max-w-[1550px] mx-auto">
 
+    <!-- Ícone de Tema no Canto Superior Esquerdo (Acima do Header) -->
+    <div class="flex items-center mb-1 pl-0.5 no-print">
+      <button id="btn-toggle-theme" onclick="toggleTheme()" class="text-base leading-none opacity-85 hover:opacity-100 hover:scale-110 transition-all cursor-pointer select-none" title="Alternar Tema Escuro / Claro">
+        <span id="theme-icon">🌙</span>
+      </button>
+    </div>
+
     <!-- HEADER PRINCIPAL (Cinza-Escuro #1e2633 sobre fundo Navy) -->
     <header class="mb-3 bg-white dark:bg-[#1e2633] border border-slate-200 dark:border-[#323f52] rounded-2xl p-3 shadow-xl navy-glow flex flex-col lg:flex-row lg:items-center justify-between gap-3 no-print">
       
-      <!-- Identidade Visual Agendophobia + Tema -->
+      <!-- Esquerda: Botão Compacto GitHub Sync + Badge 24H + KMKZ / Data / Relógio -->
       <div class="flex items-center gap-3">
-        <button id="btn-toggle-theme" onclick="toggleTheme()" class="bg-slate-100 dark:bg-[#263040] border border-slate-300 dark:border-[#3b4a61] text-slate-800 dark:text-slate-100 w-10 h-10 rounded-xl shadow-sm transition-all hover:scale-105 hover:border-sky-400 flex items-center justify-center font-bold cursor-pointer" title="Alternar Tema Escuro / Claro">
-          <span id="theme-icon" class="text-lg">🌙</span>
-        </button>
+        <div class="bg-slate-100 dark:bg-[#263040] border border-slate-300 dark:border-[#3b4a61] w-10 h-10 rounded-xl shadow-sm flex items-center justify-center">
+          <button id="btn-cloud-sync" onclick="forceGitHubCloudSync()" class="bg-emerald-600 hover:bg-emerald-500 text-white w-6 h-6 rounded-lg transition shadow flex items-center justify-center cursor-pointer" title="Sincronização em Nuvem via GitHub — Clique para sincronizar agora">
+            <span id="cloud-sync-icon" class="text-[11px] leading-none">🟢</span>
+            <span id="cloud-sync-text" class="hidden">GitHub Sync</span>
+          </button>
+        </div>
 
         <div class="flex items-center gap-3">
           <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-sky-500 via-blue-600 to-indigo-600 p-[1.5px] shadow-md">
@@ -207,20 +217,17 @@
             </div>
           </div>
 
-          <div>
-            <div class="flex items-center gap-2">
-              <h1 class="font-display text-lg font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-1.5">
-                AGENDOPHOBIA
-                <span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded-md bg-sky-500/15 text-sky-600 dark:text-sky-300 border border-sky-400/30 uppercase">
-                  KMKZ • 24H
-                </span>
-              </h1>
+          <div class="flex flex-col justify-center leading-tight gap-0.5">
+            <div>
+              <span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded-md bg-sky-500/15 text-sky-600 dark:text-sky-300 border border-sky-400/30 uppercase inline-block">
+                KMKZ • 24H
+              </span>
             </div>
-            <p class="text-[11px] text-slate-500 dark:text-slate-300 font-medium flex items-center gap-2">
-              <span>Operador: <strong class="text-slate-900 dark:text-white">Kmkz</strong></span>
+            <span id="lbl-mode-indicator" class="font-mono text-[11px] font-bold text-sky-600 dark:text-sky-400 mt-0.5">📅 --/--/----</span>
+            <div class="text-[11px] text-slate-500 dark:text-slate-300 font-medium flex items-center gap-1.5">
               <span class="text-slate-300 dark:text-slate-500">•</span>
               <span id="live-clock" class="font-mono text-[11px] text-sky-600 dark:text-sky-400 font-semibold">--:--:--</span>
-            </p>
+            </div>
           </div>
         </div>
       </div>
@@ -260,13 +267,8 @@
         </button>
       </div>
 
-      <!-- Sincronização GitHub Cloud (Sem Firebase) + Backup + Logout -->
+      <!-- Direita: Backup + Restaurar + Sair -->
       <div class="flex flex-wrap items-center gap-1.5">
-        <button id="btn-cloud-sync" onclick="forceGitHubCloudSync()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs px-3 py-2 rounded-xl transition font-extrabold shadow flex items-center gap-1.5 cursor-pointer" title="Sincronização em Nuvem via GitHub (Sem Firebase) — Clique para sincronizar agora">
-          <span id="cloud-sync-icon">🟢</span>
-          <span id="cloud-sync-text">GitHub Sync</span>
-        </button>
-
         <button onclick="exportBackupJSON()" class="bg-[#263040] hover:bg-[#323f52] text-slate-100 border border-[#3b4a61] text-xs px-2.5 py-2 rounded-xl transition font-bold shadow flex items-center gap-1 cursor-pointer" title="Exportar Backup Local (.json)">
           📥 Backup
         </button>
@@ -294,7 +296,7 @@
       <!-- Barra de Ferramentas Enxuta & Dinâmica -->
       <div class="sticky top-2 z-30 flex flex-wrap items-center justify-between gap-2.5 mb-3 no-print bg-slate-50/95 dark:bg-[#263040]/95 backdrop-blur-md p-2.5 rounded-xl border border-slate-200 dark:border-[#3b4a61] shadow-md">
         
-        <div class="flex flex-wrap items-center gap-1.5">
+        <div class="flex flex-wrap items-center gap-2">
           <!-- Alternador de Visualização das 24h -->
           <button id="btn-toggle-layout" onclick="toggleLayoutMode()" class="bg-sky-600 hover:bg-sky-500 text-white text-xs px-3 py-1.5 rounded-xl transition font-extrabold shadow flex items-center gap-1.5 cursor-pointer" title="Alternar entre Visão Lado a Lado (00h-11h | 12h-23h) ou Lista Contínua (00h-23h)">
             <span id="layout-icon">⚡</span>
@@ -305,18 +307,19 @@
             ⏪ Repetir Ontem
           </button>
 
-          <button onclick="clearCurrentDay()" class="bg-rose-500/15 hover:bg-rose-600 hover:text-white text-rose-600 dark:text-rose-300 border border-rose-400/30 text-xs px-2.5 py-1.5 rounded-xl transition font-bold flex items-center gap-1 cursor-pointer" title="Limpar todas as 24h deste dia">
-            🗑️ Limpar Dia
+          <button onclick="clearCurrentDay()" class="bg-rose-500/15 hover:bg-rose-600 hover:text-white text-rose-600 dark:text-rose-300 border border-rose-400/30 text-xs px-2.5 py-1.5 rounded-xl transition font-bold flex items-center justify-center cursor-pointer" title="Limpar todas as 24h deste dia">
+            🗑️
           </button>
-        </div>
 
-        <!-- Paleta de Cores Agendophobia + Botão "+tools" bem pequeno à direita -->
-        <div class="flex items-center gap-2">
-          <span id="lbl-mode-indicator" class="font-mono text-[11px] font-bold text-sky-600 dark:text-sky-400 hidden md:inline mr-1"></span>
-          <div id="fixed-color-palette" class="flex items-center gap-1.5 bg-slate-100 dark:bg-[#161f2c] border border-slate-300 dark:border-[#3b4a61] rounded-xl px-2.5 py-1.5 shadow-inner">
+          <!-- Paleta de Cores ao lado do botão de lixeira -->
+          <div id="fixed-color-palette" class="flex items-center gap-1.5 bg-slate-100 dark:bg-[#161f2c] border border-slate-300 dark:border-[#3b4a61] rounded-xl px-2.5 py-1.5 shadow-inner ml-2">
             <!-- Gerado via JS -->
           </div>
-          <button id="btn-toggle-more-tools" onclick="toggleMoreToolsPanel()" class="px-2 py-1 rounded-lg bg-slate-200 dark:bg-[#161f2c] hover:bg-sky-600 hover:text-white dark:hover:bg-sky-600 text-slate-700 dark:text-sky-300 border border-slate-300 dark:border-[#3b4a61] font-mono text-[10px] font-extrabold tracking-tight transition shadow-sm cursor-pointer select-none" title="Abrir ferramentas específicas à direita">
+        </div>
+
+        <!-- Botão "+tools" à direita -->
+        <div class="flex items-center">
+          <button id="btn-toggle-more-tools" onclick="toggleMoreToolsPanel()" class="px-3 py-1.5 rounded-xl bg-slate-200 dark:bg-[#161f2c] hover:bg-sky-600 hover:text-white dark:hover:bg-sky-600 text-slate-700 dark:text-sky-300 border border-slate-300 dark:border-[#3b4a61] font-mono text-xs font-extrabold tracking-tight transition shadow-sm cursor-pointer select-none" title="Abrir ferramentas específicas à direita">
             +tools
           </button>
         </div>
@@ -352,50 +355,19 @@
         <!-- Painel Lateral Direito (3 colunas no desktop) -->
         <div class="lg:col-span-3 flex flex-col gap-3">
 
-          <!-- PAINEL EXPANSÍVEL "+tools" AO LADO DIREITO (Abre ao apertar "+tools") -->
+          <!-- PAINEL EXPANSÍVEL "+tools" AO LADO DIREITO (Somente Copiar & Colar Dia Inteiro) -->
           <div id="more-tools-panel" class="hidden bg-slate-100 dark:bg-[#161f2c] border-2 border-sky-500/50 dark:border-sky-400/40 rounded-xl p-3 shadow-xl flex flex-col gap-3 no-print">
             <div class="flex items-center justify-between border-b border-slate-200 dark:border-[#323f52] pb-2">
               <span class="font-mono text-[11px] font-extrabold uppercase tracking-wider text-sky-600 dark:text-sky-400 flex items-center gap-1.5">
-                🛠️ +tools • Ferramentas Específicas
+                🛠️ +tools • Copiar & Colar Dia Inteiro
               </span>
               <button onclick="toggleMoreToolsPanel()" class="text-slate-400 hover:text-slate-800 dark:hover:text-white text-xs font-bold cursor-pointer">✕</button>
             </div>
 
-            <!-- FERRAMENTA 1: SOBREPOR O QUE CORTEI / SELECIONEI -->
+            <!-- FERRAMENTA: COPIAR E COLAR DIA INTEIRO (SELECT BOX & CHECKBOXES) -->
             <div class="bg-white dark:bg-[#1e2633] border border-slate-200 dark:border-[#323f52] rounded-xl p-2.5 flex flex-col gap-2">
               <div class="flex items-center justify-between">
-                <span class="text-[10px] font-mono font-bold uppercase text-slate-500 dark:text-slate-300">1. Recorte & Sobrepor Horários</span>
-                <span id="lbl-buffer-status" class="text-[9px] font-mono px-1.5 py-0.5 rounded bg-slate-100 dark:bg-[#263040] text-slate-400">Vazio</span>
-              </div>
-
-              <div class="grid grid-cols-2 gap-1.5">
-                <button onclick="cutSelectedSlots()" class="bg-slate-100 dark:bg-[#263040] hover:bg-amber-600 hover:text-white text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-[#3b4a61] text-[11px] font-bold py-1.5 px-2 rounded-lg transition flex items-center justify-center gap-1 cursor-pointer" title="Corta os horários selecionados (apaga da origem e guarda para sobrepor)">
-                  ✂️ Cortar Seleção
-                </button>
-                <button onclick="copySelectedSlots()" class="bg-slate-100 dark:bg-[#263040] hover:bg-sky-600 hover:text-white text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-[#3b4a61] text-[11px] font-bold py-1.5 px-2 rounded-lg transition flex items-center justify-center gap-1 cursor-pointer" title="Guarda os horários selecionados sem apagar da origem">
-                  📋 Capturar Seleção
-                </button>
-              </div>
-
-              <!-- Botão Simples de Sobrepor -->
-              <button onclick="overwriteWithCutOrSelected()" class="w-full bg-sky-600 hover:bg-sky-500 text-white text-xs font-extrabold py-2 px-3 rounded-lg shadow transition flex items-center justify-center gap-1.5 cursor-pointer" title="Sobrepõe a célula selecionada (e as seguintes) com o que você cortou ou capturou">
-                ⚡ Sobrepor na Seleção
-              </button>
-
-              <div class="grid grid-cols-2 gap-1.5 pt-1 border-t border-slate-100 dark:border-[#2a3546]">
-                <button onclick="splitOrMergeFocusedSlot()" class="bg-slate-100 dark:bg-[#263040] hover:bg-indigo-600 hover:text-white text-slate-700 dark:text-slate-200 text-[10px] font-bold py-1 px-2 rounded-lg transition cursor-pointer">
-                  ⏱️ Dividir/Unir 30m
-                </button>
-                <button onclick="deleteSelectedSlots()" class="bg-rose-500/10 hover:bg-rose-600 hover:text-white text-rose-500 dark:text-rose-300 text-[10px] font-bold py-1 px-2 rounded-lg transition cursor-pointer">
-                  🧹 Apagar Seleção
-                </button>
-              </div>
-            </div>
-
-            <!-- FERRAMENTA 2: COPIAR E COLAR DIA INTEIRO (SELECT BOX & CHECKBOXES) -->
-            <div class="bg-white dark:bg-[#1e2633] border border-slate-200 dark:border-[#323f52] rounded-xl p-2.5 flex flex-col gap-2">
-              <div class="flex items-center justify-between">
-                <span class="text-[10px] font-mono font-bold uppercase text-slate-500 dark:text-slate-300">2. Copiar & Colar Dia Inteiro</span>
+                <span class="text-[10px] font-mono font-bold uppercase text-slate-500 dark:text-slate-300">Copiar & Colar Dia Inteiro</span>
                 <button onclick="copyCurrentFullDayToBuffer()" class="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-sky-500/15 hover:bg-sky-600 hover:text-white text-sky-500 dark:text-sky-300 border border-sky-400/30 transition cursor-pointer" title="Copiar o dia aberto na tela agora">
                   📄 Copiar Este Dia
                 </button>
@@ -710,17 +682,18 @@
       const btn = document.getElementById('btn-cloud-sync');
       const icon = document.getElementById('cloud-sync-icon');
       const text = document.getElementById('cloud-sync-text');
-      if (!btn || !icon || !text) return;
+      if (!btn || !icon) return;
 
-      text.textContent = label;
+      if (text) text.textContent = label;
+      btn.title = `${label} — Clique para sincronizar agora`;
       if (state === 'online') {
-        btn.className = 'bg-emerald-600 hover:bg-emerald-500 text-white text-xs px-3 py-2 rounded-xl transition font-extrabold shadow flex items-center gap-1.5 cursor-pointer';
+        btn.className = 'bg-emerald-600 hover:bg-emerald-500 text-white w-6 h-6 rounded-lg transition shadow flex items-center justify-center cursor-pointer';
         icon.textContent = '🟢';
       } else if (state === 'syncing') {
-        btn.className = 'bg-amber-600 hover:bg-amber-500 text-white text-xs px-3 py-2 rounded-xl transition font-extrabold shadow flex items-center gap-1.5 cursor-pointer';
+        btn.className = 'bg-amber-600 hover:bg-amber-500 text-white w-6 h-6 rounded-lg transition shadow flex items-center justify-center cursor-pointer';
         icon.textContent = '🔄';
       } else {
-        btn.className = 'bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs px-3 py-2 rounded-xl transition font-extrabold shadow flex items-center gap-1.5 cursor-pointer';
+        btn.className = 'bg-slate-700 hover:bg-slate-600 text-slate-200 w-6 h-6 rounded-lg transition shadow flex items-center justify-center cursor-pointer';
         icon.textContent = '⚪';
       }
     }
