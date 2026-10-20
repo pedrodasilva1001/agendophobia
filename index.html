@@ -310,17 +310,31 @@
           </button>
         </div>
 
-        <!-- Paleta de Cores Agendophobia -->
+        <!-- Paleta de Cores Agendophobia + Botão "+tools" bem pequeno à direita -->
         <div class="flex items-center gap-2">
           <span id="lbl-mode-indicator" class="font-mono text-[11px] font-bold text-sky-600 dark:text-sky-400 hidden md:inline mr-1"></span>
           <div id="fixed-color-palette" class="flex items-center gap-1.5 bg-slate-100 dark:bg-[#161f2c] border border-slate-300 dark:border-[#3b4a61] rounded-xl px-2.5 py-1.5 shadow-inner">
             <!-- Gerado via JS -->
           </div>
+          <button id="btn-toggle-more-tools" onclick="toggleMoreToolsPanel()" class="px-2 py-1 rounded-lg bg-slate-200 dark:bg-[#161f2c] hover:bg-sky-600 hover:text-white dark:hover:bg-sky-600 text-slate-700 dark:text-sky-300 border border-slate-300 dark:border-[#3b4a61] font-mono text-[10px] font-extrabold tracking-tight transition shadow-sm cursor-pointer select-none" title="Abrir ferramentas específicas à direita">
+            +tools
+          </button>
         </div>
 
       </div>
 
-      <!-- TABELA DIÁRIA 24 HORAS + NOTAS DO DIA -->
+      <!-- Banner de Modo "Clicar no Dia para Colar" (Aparece quando ativado) -->
+      <div id="click-paste-day-banner" class="hidden mb-3 bg-sky-600/20 border border-sky-400/50 rounded-xl px-3 py-2 flex items-center justify-between gap-2 text-xs no-print">
+        <div class="flex items-center gap-2">
+          <span class="animate-pulse">🎯</span>
+          <span><strong>Modo Colar Dia Ativo:</strong> Dia <strong id="lbl-copied-day-source" class="text-sky-400 font-mono">--</strong> copiado! Clique em qualquer dia na barra de dias acima para colar o dia inteiro lá.</span>
+        </div>
+        <button onclick="disableClickToPasteDayMode()" class="px-2.5 py-1 rounded-lg bg-rose-600 hover:bg-rose-500 text-white text-[11px] font-bold cursor-pointer">
+          ✕ Cancelar Modo
+        </button>
+      </div>
+
+      <!-- TABELA DIÁRIA 24 HORAS + PAINEL À DIREITA -->
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-3">
         
         <!-- Grade de 24 Horas (Ocupa 9 colunas no desktop) -->
@@ -335,8 +349,114 @@
           </table>
         </div>
 
-        <!-- Painel Lateral do Dia: Foco / Prioridades & Notas Rápidas (3 colunas no desktop) -->
+        <!-- Painel Lateral Direito (3 colunas no desktop) -->
         <div class="lg:col-span-3 flex flex-col gap-3">
+
+          <!-- PAINEL EXPANSÍVEL "+tools" AO LADO DIREITO (Abre ao apertar "+tools") -->
+          <div id="more-tools-panel" class="hidden bg-slate-100 dark:bg-[#161f2c] border-2 border-sky-500/50 dark:border-sky-400/40 rounded-xl p-3 shadow-xl flex flex-col gap-3 no-print">
+            <div class="flex items-center justify-between border-b border-slate-200 dark:border-[#323f52] pb-2">
+              <span class="font-mono text-[11px] font-extrabold uppercase tracking-wider text-sky-600 dark:text-sky-400 flex items-center gap-1.5">
+                🛠️ +tools • Ferramentas Específicas
+              </span>
+              <button onclick="toggleMoreToolsPanel()" class="text-slate-400 hover:text-slate-800 dark:hover:text-white text-xs font-bold cursor-pointer">✕</button>
+            </div>
+
+            <!-- FERRAMENTA 1: SOBREPOR O QUE CORTEI / SELECIONEI -->
+            <div class="bg-white dark:bg-[#1e2633] border border-slate-200 dark:border-[#323f52] rounded-xl p-2.5 flex flex-col gap-2">
+              <div class="flex items-center justify-between">
+                <span class="text-[10px] font-mono font-bold uppercase text-slate-500 dark:text-slate-300">1. Recorte & Sobrepor Horários</span>
+                <span id="lbl-buffer-status" class="text-[9px] font-mono px-1.5 py-0.5 rounded bg-slate-100 dark:bg-[#263040] text-slate-400">Vazio</span>
+              </div>
+
+              <div class="grid grid-cols-2 gap-1.5">
+                <button onclick="cutSelectedSlots()" class="bg-slate-100 dark:bg-[#263040] hover:bg-amber-600 hover:text-white text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-[#3b4a61] text-[11px] font-bold py-1.5 px-2 rounded-lg transition flex items-center justify-center gap-1 cursor-pointer" title="Corta os horários selecionados (apaga da origem e guarda para sobrepor)">
+                  ✂️ Cortar Seleção
+                </button>
+                <button onclick="copySelectedSlots()" class="bg-slate-100 dark:bg-[#263040] hover:bg-sky-600 hover:text-white text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-[#3b4a61] text-[11px] font-bold py-1.5 px-2 rounded-lg transition flex items-center justify-center gap-1 cursor-pointer" title="Guarda os horários selecionados sem apagar da origem">
+                  📋 Capturar Seleção
+                </button>
+              </div>
+
+              <!-- Botão Simples de Sobrepor -->
+              <button onclick="overwriteWithCutOrSelected()" class="w-full bg-sky-600 hover:bg-sky-500 text-white text-xs font-extrabold py-2 px-3 rounded-lg shadow transition flex items-center justify-center gap-1.5 cursor-pointer" title="Sobrepõe a célula selecionada (e as seguintes) com o que você cortou ou capturou">
+                ⚡ Sobrepor na Seleção
+              </button>
+
+              <div class="grid grid-cols-2 gap-1.5 pt-1 border-t border-slate-100 dark:border-[#2a3546]">
+                <button onclick="splitOrMergeFocusedSlot()" class="bg-slate-100 dark:bg-[#263040] hover:bg-indigo-600 hover:text-white text-slate-700 dark:text-slate-200 text-[10px] font-bold py-1 px-2 rounded-lg transition cursor-pointer">
+                  ⏱️ Dividir/Unir 30m
+                </button>
+                <button onclick="deleteSelectedSlots()" class="bg-rose-500/10 hover:bg-rose-600 hover:text-white text-rose-500 dark:text-rose-300 text-[10px] font-bold py-1 px-2 rounded-lg transition cursor-pointer">
+                  🧹 Apagar Seleção
+                </button>
+              </div>
+            </div>
+
+            <!-- FERRAMENTA 2: COPIAR E COLAR DIA INTEIRO (SELECT BOX & CHECKBOXES) -->
+            <div class="bg-white dark:bg-[#1e2633] border border-slate-200 dark:border-[#323f52] rounded-xl p-2.5 flex flex-col gap-2">
+              <div class="flex items-center justify-between">
+                <span class="text-[10px] font-mono font-bold uppercase text-slate-500 dark:text-slate-300">2. Copiar & Colar Dia Inteiro</span>
+                <button onclick="copyCurrentFullDayToBuffer()" class="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-sky-500/15 hover:bg-sky-600 hover:text-white text-sky-500 dark:text-sky-300 border border-sky-400/30 transition cursor-pointer" title="Copiar o dia aberto na tela agora">
+                  📄 Copiar Este Dia
+                </button>
+              </div>
+
+              <!-- Select Box de qual dia copiar -->
+              <div>
+                <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-300 mb-1">Qual dia copiar (Origem):</label>
+                <div class="flex items-center gap-1">
+                  <select id="select-source-day" onchange="onSelectSourceDayChange(this.value)" class="flex-1 bg-slate-50 dark:bg-[#263040] border border-slate-300 dark:border-[#3b4a61] rounded-lg px-2 py-1.5 text-[11px] font-semibold text-slate-800 dark:text-slate-100 outline-none">
+                    <!-- Preenchido via JS -->
+                  </select>
+                  <input type="date" id="custom-source-date" onchange="setCustomSourceDay(this.value)" class="w-6 h-6 opacity-75 hover:opacity-100 cursor-pointer bg-transparent text-xs outline-none" title="Escolher outra data de origem no calendário">
+                </div>
+              </div>
+
+              <!-- Ações Rápidas: Colar no Dia Atual ou Clicar no Dia na Barra -->
+              <div class="grid grid-cols-2 gap-1.5">
+                <button onclick="pasteFullDayIntoCurrentDay()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-[11px] font-extrabold py-1.5 px-2 rounded-lg shadow transition flex items-center justify-center gap-1 cursor-pointer" title="Cola o dia inteiro copiado diretamente no dia aberto na tela">
+                  📥 Colar Neste Dia
+                </button>
+                <button id="btn-click-paste-mode" onclick="toggleClickToPasteDayMode()" class="bg-slate-100 dark:bg-[#263040] hover:bg-sky-600 hover:text-white text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-[#3b4a61] text-[11px] font-bold py-1.5 px-2 rounded-lg transition flex items-center justify-center gap-1 cursor-pointer" title="Ative para sair clicando nos dias da barra superior e colar neles">
+                  🎯 Colar no Clique
+                </button>
+              </div>
+
+              <!-- Multi-Select Box (Checkboxes) de quais dias colar -->
+              <div class="pt-1.5 border-t border-slate-100 dark:border-[#2a3546]">
+                <div class="flex items-center justify-between mb-1">
+                  <label class="text-[10px] font-bold text-slate-500 dark:text-slate-300">Colar nos dias (Destino):</label>
+                  <div class="flex items-center gap-1">
+                    <button type="button" onclick="selectTargetDaysPreset('weekdays')" class="text-[9px] font-mono px-1.5 py-0.5 rounded bg-slate-200 dark:bg-[#263040] hover:bg-sky-600 hover:text-white text-slate-600 dark:text-slate-300 cursor-pointer">Seg-Sex</button>
+                    <button type="button" onclick="selectTargetDaysPreset('all')" class="text-[9px] font-mono px-1.5 py-0.5 rounded bg-slate-200 dark:bg-[#263040] hover:bg-sky-600 hover:text-white text-slate-600 dark:text-slate-300 cursor-pointer">Todos</button>
+                    <button type="button" onclick="selectTargetDaysPreset('none')" class="text-[9px] font-mono px-1.5 py-0.5 rounded bg-slate-200 dark:bg-[#263040] hover:bg-rose-600 hover:text-white text-slate-600 dark:text-slate-300 cursor-pointer">Limpar</button>
+                  </div>
+                </div>
+
+                <!-- Lista de Checkboxes de Dias -->
+                <div id="target-days-checkbox-list" class="max-h-36 overflow-y-auto custom-scrollbar bg-slate-50 dark:bg-[#161f2c] border border-slate-200 dark:border-[#323f52] rounded-lg p-1.5 flex flex-col gap-1">
+                  <!-- Gerado via JS -->
+                </div>
+
+                <!-- Adicionar data extra na lista de destino -->
+                <div class="flex items-center justify-between gap-1 mt-1.5">
+                  <span class="text-[10px] text-slate-400">+ Outra data:</span>
+                  <input type="date" id="add-custom-target-date" onchange="addCustomTargetDayCheckbox(this.value)" class="bg-slate-50 dark:bg-[#263040] border border-slate-300 dark:border-[#3b4a61] rounded px-1.5 py-0.5 text-[10px] font-mono text-slate-700 dark:text-slate-200 outline-none cursor-pointer">
+                </div>
+
+                <!-- Opção de Sobrepor ou Mesclar -->
+                <label class="flex items-center gap-1.5 text-[10px] text-slate-600 dark:text-slate-300 mt-2 cursor-pointer select-none">
+                  <input type="checkbox" id="cb-overwrite-day" checked class="w-3.5 h-3.5 rounded accent-sky-500 cursor-pointer">
+                  <span>Sobrepor horários já ocupados no destino</span>
+                </label>
+
+                <button onclick="executeMultiDayPaste()" class="w-full mt-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-extrabold py-2 px-3 rounded-lg shadow transition flex items-center justify-center gap-1.5 cursor-pointer">
+                  🚀 Colar nos Dias Marcados
+                </button>
+              </div>
+            </div>
+
+          </div>
           
           <!-- Resumo de Ocupação das 24h -->
           <div class="bg-slate-50 dark:bg-[#263040] border border-slate-200 dark:border-[#3b4a61] rounded-xl p-3.5 shadow-sm">
@@ -941,6 +1061,10 @@
       }
 
       renderWeekStrip();
+      const toolsPanel = document.getElementById('more-tools-panel');
+      if (toolsPanel && !toolsPanel.classList.contains('hidden')) {
+        populateToolsDaySelectors();
+      }
     }
 
     function renderWeekStrip() {
@@ -967,14 +1091,28 @@
 
         const btn = document.createElement('button');
         btn.type = 'button';
-        btn.onclick = () => jumpToDate(iso);
+        btn.onclick = () => {
+          if (typeof clickToPasteDayMode !== 'undefined' && clickToPasteDayMode) {
+            const srcISO = copiedSourceDayISO || currentDateISO;
+            const overwrite = document.getElementById('cb-overwrite-day') ? document.getElementById('cb-overwrite-day').checked : true;
+            const count = copyFullDayFromTo(srcISO, iso, overwrite);
+            persistDatabase();
+            renderAll();
+            showToast(`🎯 Dia ${srcISO.split('-').reverse().join('/')} colado em ${iso.split('-').reverse().join('/')} (${count}h)!`);
+            return;
+          }
+          jumpToDate(iso);
+        };
 
         const baseClasses = 'flex flex-col items-center justify-center py-2 px-1 rounded-xl border transition-all cursor-pointer select-none relative overflow-hidden';
+        const pasteRingClass = (typeof clickToPasteDayMode !== 'undefined' && clickToPasteDayMode)
+          ? 'ring-2 ring-sky-400/70 hover:bg-sky-600/30'
+          : '';
         const activeClasses = isSelected
           ? 'bg-sky-600 text-white border-sky-400 shadow-lg shadow-sky-900/40 scale-[1.02]'
           : 'bg-white dark:bg-[#1e2633] text-slate-700 dark:text-slate-200 border-slate-200 dark:border-[#323f52] hover:border-sky-400/60 dark:hover:bg-[#263040]';
 
-        btn.className = `${baseClasses} ${activeClasses}`;
+        btn.className = `${baseClasses} ${activeClasses} ${pasteRingClass}`;
         btn.innerHTML = `
           <div class="flex items-center gap-1">
             <span class="text-[10px] font-mono font-extrabold tracking-wider ${isSelected ? 'text-sky-100' : 'text-slate-400 dark:text-slate-300'}">${shortWeekdays[d.getDay()]}</span>
@@ -1712,57 +1850,480 @@
       renderGrid();
     }
 
-    function copySelectedSlots() {
-      clipboardSlots = [];
+    // ============================================================================
+    // PAINEL "+tools" À DIREITA: RECORTE, SOBREPOR E COPIAR/COLAR DIAS INTEIROS
+    // ============================================================================
+    let copiedSourceDayISO = '';
+    let clickToPasteDayMode = false;
+    let customTargetDates = [];
+    let lastClipboardAction = ''; // 'cut' | 'copy'
 
-      if (selectedCellsMap.size > 0) {
-        selectedCellsMap.forEach((inputEl, cellKey) => {
-          const realKey = cellKey.includes('|slot') ? cellKey.split('|').slice(0, -1).join('|') : cellKey;
-          const val = database[realKey];
-          clipboardSlots.push({
-            text: inputEl.value,
-            color: (typeof val === 'object' && val) ? (val.color || val.color1 || '') : ''
-          });
-        });
-      } else if (lastFocusedCellKey && lastFocusedCellInput) {
-        const realKey = lastFocusedCellKey.includes('|slot') ? lastFocusedCellKey.split('|').slice(0, -1).join('|') : lastFocusedCellKey;
-        const val = database[realKey];
-        clipboardSlots.push({
-          text: lastFocusedCellInput.value,
-          color: (typeof val === 'object' && val) ? (val.color || val.color1 || '') : ''
-        });
-      }
-
-      if (clipboardSlots.length > 0) {
-        showToast(`📋 ${clipboardSlots.length} horário(s) copiado(s)!`);
+    function updateBufferStatusBadge() {
+      const badge = document.getElementById('lbl-buffer-status');
+      if (!badge) return;
+      if (!clipboardSlots.length) {
+        badge.textContent = 'Vazio';
+        badge.className = 'text-[9px] font-mono px-1.5 py-0.5 rounded bg-slate-100 dark:bg-[#263040] text-slate-400';
+      } else {
+        const prefix = lastClipboardAction === 'cut' ? '✂️ Cortado' : '📋 Capturado';
+        badge.textContent = `${prefix}: ${clipboardSlots.length}h`;
+        badge.className = 'text-[9px] font-mono font-bold px-1.5 py-0.5 rounded bg-sky-500/20 text-sky-400 border border-sky-400/30';
       }
     }
 
-    function pasteSelectedSlots() {
-      if (!clipboardSlots.length) return;
+    function toggleMoreToolsPanel() {
+      const panel = document.getElementById('more-tools-panel');
+      const btn = document.getElementById('btn-toggle-more-tools');
+      if (!panel) return;
+      const isHidden = panel.classList.contains('hidden');
+      if (isHidden) {
+        panel.classList.remove('hidden');
+        if (btn) {
+          btn.classList.add('bg-sky-600', 'text-white', 'border-sky-400');
+          btn.classList.remove('bg-slate-200', 'dark:bg-[#161f2c]', 'text-slate-700', 'dark:text-sky-300');
+        }
+        if (!copiedSourceDayISO) copiedSourceDayISO = currentDateISO;
+        updateBufferStatusBadge();
+        populateToolsDaySelectors();
+      } else {
+        panel.classList.add('hidden');
+        if (btn) {
+          btn.classList.remove('bg-sky-600', 'text-white', 'border-sky-400');
+          btn.classList.add('bg-slate-200', 'dark:bg-[#161f2c]', 'text-slate-700', 'dark:text-sky-300');
+        }
+      }
+    }
 
-      const targets = [];
+    function collectTargetCellsForClipboard() {
+      const entries = [];
       if (selectedCellsMap.size > 0) {
-        selectedCellsMap.forEach((inputEl, cellKey) => targets.push({ key: cellKey, input: inputEl }));
+        selectedCellsMap.forEach((inputEl, cellKey) => {
+          entries.push({ key: cellKey, input: inputEl });
+        });
       } else if (lastFocusedCellKey && lastFocusedCellInput) {
-        targets.push({ key: lastFocusedCellKey, input: lastFocusedCellInput });
+        entries.push({ key: lastFocusedCellKey, input: lastFocusedCellInput });
+      }
+      return entries;
+    }
+
+    function copySelectedSlots() {
+      const entries = collectTargetCellsForClipboard();
+      if (!entries.length) {
+        showToast('⚠️ Clique ou selecione um horário primeiro.');
+        return;
       }
 
-      if (!targets.length) return;
+      clipboardSlots = [];
+      entries.forEach(({ key, input }) => {
+        const realKey = key.includes('|slot') ? key.split('|').slice(0, -1).join('|') : key;
+        const val = database[realKey];
+        clipboardSlots.push({
+          text: input ? input.value : (typeof val === 'string' ? val : (val?.text || '')),
+          color: (typeof val === 'object' && val) ? (val.color || val.color1 || '') : '',
+          rawCell: val ? JSON.parse(JSON.stringify(val)) : null,
+          isSubSlot: key.includes('|slot')
+        });
+      });
 
-      targets.forEach((t, idx) => {
-        const src = clipboardSlots[idx % clipboardSlots.length];
-        t.input.value = src.text;
-        const autoColor = getPresetColorForText(src.text);
-        const finalColor = autoColor || src.color;
-        if (t.key.includes('|slot')) {
-          applyColorToKey(t.key, finalColor, t.input);
+      lastClipboardAction = 'copy';
+      updateBufferStatusBadge();
+      showToast(`📋 ${clipboardSlots.length} horário(s) capturado(s)!`);
+    }
+
+    function cutSelectedSlots() {
+      const entries = collectTargetCellsForClipboard();
+      if (!entries.length) {
+        showToast('⚠️ Clique ou selecione o horário que deseja cortar.');
+        return;
+      }
+
+      clipboardSlots = [];
+      entries.forEach(({ key, input }) => {
+        const realKey = key.includes('|slot') ? key.split('|').slice(0, -1).join('|') : key;
+        const val = database[realKey];
+        clipboardSlots.push({
+          text: input ? input.value : (typeof val === 'string' ? val : (val?.text || '')),
+          color: (typeof val === 'object' && val) ? (val.color || val.color1 || '') : '',
+          rawCell: val ? JSON.parse(JSON.stringify(val)) : null,
+          isSubSlot: key.includes('|slot')
+        });
+
+        // Remove da origem
+        if (key.includes('|slot1') && val && val.split) {
+          val.slot1 = '';
+          val.color1 = '';
+        } else if (key.includes('|slot2') && val && val.split) {
+          val.slot2 = '';
+          val.color2 = '';
         } else {
-          updateCellState(t.key, src.text, finalColor, t.input);
+          delete database[realKey];
         }
       });
 
-      showToast(`📥 Colado em ${targets.length} célula(s)!`);
+      lastClipboardAction = 'cut';
+      persistDatabase();
+      renderGrid();
+      updateBufferStatusBadge();
+      showToast(`✂️ ${clipboardSlots.length} horário(s) cortado(s)! Use "Sobrepor" onde desejar.`);
+    }
+
+    function overwriteWithCutOrSelected() {
+      if (!clipboardSlots.length) {
+        showToast('⚠️ Corte (✂️) ou capture (📋) um horário antes de sobrepor.');
+        return;
+      }
+
+      const targets = collectTargetCellsForClipboard();
+      if (!targets.length) {
+        showToast('⚠️ Clique no horário onde deseja sobrepor.');
+        return;
+      }
+
+      // Se o usuário selecionou apenas 1 horário de destino mas tem múltiplos horários cortados/capturados,
+      // sobrepõe em sequência a partir da hora focada!
+      if (targets.length === 1 && clipboardSlots.length > 1 && !targets[0].key.includes('|slot')) {
+        const parts = targets[0].key.split('|');
+        const dateISO = parts[0];
+        const startHour = parseInt(parts[1], 10);
+        let applied = 0;
+
+        for (let i = 0; i < clipboardSlots.length; i++) {
+          const h = startHour + i;
+          if (h > 23) break;
+          const destKey = `${dateISO}|${h}`;
+          const src = clipboardSlots[i];
+          if (src.rawCell && !src.isSubSlot) {
+            database[destKey] = JSON.parse(JSON.stringify(src.rawCell));
+          } else {
+            const autoColor = getPresetColorForText(src.text);
+            database[destKey] = {
+              text: src.text || '',
+              color: autoColor || src.color || ''
+            };
+          }
+          applied++;
+        }
+
+        persistDatabase();
+        renderGrid();
+        showToast(`⚡ Sobreposto em ${applied} horário(s) seguido(s)!`);
+        return;
+      }
+
+      // Caso contrário, sobrepõe exatamente nas células selecionadas
+      targets.forEach((t, idx) => {
+        const src = clipboardSlots[idx % clipboardSlots.length];
+        const realKey = t.key.includes('|slot') ? t.key.split('|').slice(0, -1).join('|') : t.key;
+
+        if (!t.key.includes('|slot') && src.rawCell && src.rawCell.split) {
+          database[realKey] = JSON.parse(JSON.stringify(src.rawCell));
+        } else {
+          const autoColor = getPresetColorForText(src.text);
+          const finalColor = autoColor || src.color || '';
+          if (t.key.includes('|slot')) {
+            if (t.input) t.input.value = src.text;
+            applyColorToKey(t.key, finalColor, t.input);
+          } else {
+            database[realKey] = {
+              text: src.text || '',
+              color: finalColor
+            };
+          }
+        }
+      });
+
+      persistDatabase();
+      renderGrid();
+      showToast(`⚡ Sobreposto em ${targets.length} horário(s)!`);
+    }
+
+    function pasteSelectedSlots() {
+      overwriteWithCutOrSelected();
+    }
+
+    function deleteSelectedSlots() {
+      const targets = collectTargetCellsForClipboard();
+      if (!targets.length) {
+        showToast('⚠️ Selecione ao menos uma célula para apagar.');
+        return;
+      }
+      targets.forEach(({ key }) => {
+        const realKey = key.includes('|slot') ? key.split('|').slice(0, -1).join('|') : key;
+        if (key.includes('|slot1') && database[realKey]?.split) {
+          database[realKey].slot1 = '';
+          database[realKey].color1 = '';
+        } else if (key.includes('|slot2') && database[realKey]?.split) {
+          database[realKey].slot2 = '';
+          database[realKey].color2 = '';
+        } else {
+          delete database[realKey];
+        }
+      });
+      persistDatabase();
+      renderGrid();
+      showToast(`🧹 ${targets.length} horário(s) apagado(s)!`);
+    }
+
+    // ============================================================================
+    // COPIAR E COLAR DIA INTEIRO (SELECT BOX, MULTI-CHECKBOXES E CLIQUE NO DIA)
+    // ============================================================================
+    function countFilledHoursForDate(iso) {
+      let count = 0;
+      for (let h = 0; h < 24; h++) {
+        if (isSlotFilled(database[`${iso}|${h}`])) count++;
+      }
+      return count;
+    }
+
+    function formatDayOptionLabel(iso) {
+      const d = parseISODate(iso);
+      const weekdays = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+      const ddmm = `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
+      const filled = countFilledHoursForDate(iso);
+      const todayISO = getTodayISO();
+      let tag = '';
+      if (iso === currentDateISO && iso === todayISO) tag = ' [Hoje • Aberto]';
+      else if (iso === currentDateISO) tag = ' [Dia Aberto]';
+      else if (iso === todayISO) tag = ' [Hoje]';
+      return `${weekdays[d.getDay()]} ${ddmm}${tag} (${filled}h ocup.)`;
+    }
+
+    function populateToolsDaySelectors() {
+      const selectSrc = document.getElementById('select-source-day');
+      const targetList = document.getElementById('target-days-checkbox-list');
+      if (!selectSrc || !targetList) return;
+
+      if (!copiedSourceDayISO) copiedSourceDayISO = currentDateISO;
+
+      // Coletar datas relevantes para o Select Box de origem
+      const candidateISOs = new Set();
+      candidateISOs.add(currentDateISO);
+      candidateISOs.add(getTodayISO());
+      if (copiedSourceDayISO) candidateISOs.add(copiedSourceDayISO);
+
+      const center = parseISODate(currentDateISO);
+      for (let offset = -7; offset <= 7; offset++) {
+        const d = new Date(center);
+        d.setDate(center.getDate() + offset);
+        candidateISOs.add(formatISODate(d));
+      }
+
+      // Incluir também todos os dias que já têm horários salvos no banco
+      Object.keys(database).forEach(k => {
+        const iso = k.split('|')[0];
+        if (iso && /^\d{4}-\d{2}-\d{2}$/.test(iso) && isSlotFilled(database[k])) {
+          candidateISOs.add(iso);
+        }
+      });
+
+      const sortedSrcISOs = Array.from(candidateISOs).sort();
+      selectSrc.innerHTML = '';
+      sortedSrcISOs.forEach(iso => {
+        const opt = document.createElement('option');
+        opt.value = iso;
+        opt.textContent = formatDayOptionLabel(iso);
+        if (iso === copiedSourceDayISO) opt.selected = true;
+        selectSrc.appendChild(opt);
+      });
+
+      const lblBanner = document.getElementById('lbl-copied-day-source');
+      if (lblBanner) {
+        lblBanner.textContent = copiedSourceDayISO.split('-').reverse().join('/');
+      }
+
+      // Preservar checkboxes já marcados antes de atualizar a lista de destino
+      const previouslyChecked = new Set(
+        Array.from(document.querySelectorAll('.target-day-cb:checked')).map(cb => cb.value)
+      );
+
+      // Gerar lista de dias de destino (-3 a +10 dias do dia aberto + datas extras)
+      const targetISOs = new Set();
+      for (let offset = -2; offset <= 10; offset++) {
+        const d = new Date(center);
+        d.setDate(center.getDate() + offset);
+        targetISOs.add(formatISODate(d));
+      }
+      customTargetDates.forEach(iso => targetISOs.add(iso));
+
+      const sortedTargets = Array.from(targetISOs).sort();
+      const shortWeekdays = ['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SÁB'];
+      targetList.innerHTML = '';
+
+      sortedTargets.forEach(iso => {
+        const d = parseISODate(iso);
+        const wd = d.getDay();
+        const filled = countFilledHoursForDate(iso);
+        const isCurrent = (iso === currentDateISO);
+        const isSrc = (iso === copiedSourceDayISO);
+
+        const row = document.createElement('label');
+        row.className = `flex items-center justify-between px-2 py-1 rounded-md text-[11px] cursor-pointer select-none transition ${
+          isCurrent
+            ? 'bg-sky-500/15 border border-sky-500/30 font-bold'
+            : 'hover:bg-slate-200/70 dark:hover:bg-[#263040]'
+        }`;
+
+        const checkedAttr = previouslyChecked.has(iso) ? 'checked' : '';
+        row.innerHTML = `
+          <div class="flex items-center gap-2">
+            <input type="checkbox" value="${iso}" data-weekday="${wd}" class="target-day-cb w-3.5 h-3.5 rounded accent-indigo-500 cursor-pointer" ${checkedAttr}>
+            <span class="font-mono font-bold text-[10px] w-7 ${wd === 0 || wd === 6 ? 'text-amber-500' : 'text-sky-500 dark:text-sky-400'}">${shortWeekdays[wd]}</span>
+            <span class="font-mono text-slate-800 dark:text-slate-100">${iso.split('-').reverse().join('/')}</span>
+            ${isCurrent ? '<span class="text-[9px] font-mono px-1 rounded bg-sky-600 text-white">Aberto</span>' : ''}
+            ${isSrc ? '<span class="text-[9px] font-mono px-1 rounded bg-amber-500/20 text-amber-400">Origem</span>' : ''}
+          </div>
+          <span class="text-[9px] font-mono ${filled > 0 ? 'text-emerald-500 font-bold' : 'text-slate-400'}">${filled > 0 ? `${filled}h` : 'Livre'}</span>
+        `;
+        targetList.appendChild(row);
+      });
+    }
+
+    function copyCurrentFullDayToBuffer() {
+      copiedSourceDayISO = currentDateISO;
+      populateToolsDaySelectors();
+      const filled = countFilledHoursForDate(copiedSourceDayISO);
+      showToast(`📄 Dia ${copiedSourceDayISO.split('-').reverse().join('/')} (${filled}h) selecionado para cópia!`);
+    }
+
+    function onSelectSourceDayChange(val) {
+      if (!val) return;
+      copiedSourceDayISO = val;
+      populateToolsDaySelectors();
+      showToast(`📅 Origem definida: ${val.split('-').reverse().join('/')}`);
+    }
+
+    function setCustomSourceDay(val) {
+      if (!val) return;
+      copiedSourceDayISO = val;
+      populateToolsDaySelectors();
+      showToast(`📅 Origem escolhida: ${val.split('-').reverse().join('/')}`);
+    }
+
+    function copyFullDayFromTo(srcISO, targetISO, overwrite = true) {
+      if (!srcISO || !targetISO) return 0;
+      let copiedCount = 0;
+
+      for (let h = 0; h < 24; h++) {
+        const srcVal = database[`${srcISO}|${h}`];
+        const destKey = `${targetISO}|${h}`;
+
+        if (isSlotFilled(srcVal)) {
+          if (overwrite || !isSlotFilled(database[destKey])) {
+            database[destKey] = JSON.parse(JSON.stringify(srcVal));
+            copiedCount++;
+          }
+        } else if (overwrite) {
+          // Quando sobrepor o dia inteiro está marcado, também limpa horários que estavam vazios na origem
+          delete database[destKey];
+        }
+      }
+      return copiedCount;
+    }
+
+    function pasteFullDayIntoCurrentDay() {
+      const srcISO = copiedSourceDayISO || document.getElementById('select-source-day')?.value;
+      if (!srcISO) {
+        showToast('⚠️ Escolha um dia de origem primeiro.');
+        return;
+      }
+      if (srcISO === currentDateISO) {
+        showToast('⚠️ O dia de origem já é o dia aberto atual. Navegue para outro dia ou marque os dias na lista abaixo!');
+        return;
+      }
+
+      const overwrite = document.getElementById('cb-overwrite-day') ? document.getElementById('cb-overwrite-day').checked : true;
+      const count = copyFullDayFromTo(srcISO, currentDateISO, overwrite);
+      persistDatabase();
+      renderAll();
+      showToast(`📥 Dia ${srcISO.split('-').reverse().join('/')} colado em ${currentDateISO.split('-').reverse().join('/')} (${count}h)!`);
+    }
+
+    function toggleClickToPasteDayMode() {
+      clickToPasteDayMode = !clickToPasteDayMode;
+      if (!copiedSourceDayISO) copiedSourceDayISO = currentDateISO;
+      updateClickToPasteDayUI();
+      if (clickToPasteDayMode) {
+        showToast(`🎯 Modo Colar no Clique ativo! Clique em qualquer dia na barra superior para colar ${copiedSourceDayISO.split('-').reverse().join('/')}.`);
+      }
+    }
+
+    function disableClickToPasteDayMode() {
+      clickToPasteDayMode = false;
+      updateClickToPasteDayUI();
+      showToast('Modo Colar no Clique desativado.');
+    }
+
+    function updateClickToPasteDayUI() {
+      const banner = document.getElementById('click-paste-day-banner');
+      const btn = document.getElementById('btn-click-paste-mode');
+      const lbl = document.getElementById('lbl-copied-day-source');
+
+      if (lbl && copiedSourceDayISO) {
+        lbl.textContent = copiedSourceDayISO.split('-').reverse().join('/');
+      }
+      if (banner) {
+        banner.classList.toggle('hidden', !clickToPasteDayMode);
+      }
+      if (btn) {
+        if (clickToPasteDayMode) {
+          btn.className = 'bg-sky-600 text-white border border-sky-400 text-[11px] font-extrabold py-1.5 px-2 rounded-lg shadow transition flex items-center justify-center gap-1 cursor-pointer animate-pulse';
+          btn.innerHTML = '🎯 Clique nos Dias Acima!';
+        } else {
+          btn.className = 'bg-slate-100 dark:bg-[#263040] hover:bg-sky-600 hover:text-white text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-[#3b4a61] text-[11px] font-bold py-1.5 px-2 rounded-lg transition flex items-center justify-center gap-1 cursor-pointer';
+          btn.innerHTML = '🎯 Colar no Clique';
+        }
+      }
+      renderWeekStrip();
+    }
+
+    function selectTargetDaysPreset(preset) {
+      const checkboxes = document.querySelectorAll('.target-day-cb');
+      checkboxes.forEach(cb => {
+        const wd = parseInt(cb.getAttribute('data-weekday'), 10);
+        const iso = cb.value;
+        if (preset === 'none') {
+          cb.checked = false;
+        } else if (preset === 'all') {
+          cb.checked = (iso !== copiedSourceDayISO);
+        } else if (preset === 'weekdays') {
+          cb.checked = (wd >= 1 && wd <= 5 && iso !== copiedSourceDayISO);
+        }
+      });
+    }
+
+    function addCustomTargetDayCheckbox(isoVal) {
+      if (!isoVal) return;
+      if (!customTargetDates.includes(isoVal)) {
+        customTargetDates.push(isoVal);
+      }
+      populateToolsDaySelectors();
+      // Marca automaticamente a data recém-adicionada
+      const cb = document.querySelector(`.target-day-cb[value="${isoVal}"]`);
+      if (cb) cb.checked = true;
+      showToast(`📅 Data ${isoVal.split('-').reverse().join('/')} adicionada e marcada na lista!`);
+    }
+
+    function executeMultiDayPaste() {
+      const srcISO = copiedSourceDayISO || document.getElementById('select-source-day')?.value || currentDateISO;
+      const checkedBoxes = Array.from(document.querySelectorAll('.target-day-cb:checked'));
+
+      if (!checkedBoxes.length) {
+        showToast('⚠️ Marque ao menos um dia na caixinha de seleção (Destino) para colar!');
+        return;
+      }
+
+      const overwrite = document.getElementById('cb-overwrite-day') ? document.getElementById('cb-overwrite-day').checked : true;
+      let daysUpdated = 0;
+
+      checkedBoxes.forEach(cb => {
+        const targetISO = cb.value;
+        copyFullDayFromTo(srcISO, targetISO, overwrite);
+        daysUpdated++;
+      });
+
+      persistDatabase();
+      renderAll();
+      showToast(`🚀 Dia ${srcISO.split('-').reverse().join('/')} colado em ${daysUpdated} dia(s) selecionado(s)!`);
     }
 
     function copyFromYesterday() {
@@ -1905,6 +2466,14 @@
           if (selectedCellsMap.size > 0 || lastFocusedCellKey) {
             e.preventDefault();
             copySelectedSlots();
+          }
+        }
+
+        if ((e.ctrlKey || e.metaKey) && (e.key === 'x' || e.key === 'X')) {
+          if (isCellTextarea && activeEl.selectionStart !== activeEl.selectionEnd) return;
+          if (selectedCellsMap.size > 0 || lastFocusedCellKey) {
+            e.preventDefault();
+            cutSelectedSlots();
           }
         }
 
